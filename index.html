@@ -180,7 +180,7 @@
               <span class="post-meta-item-text">發表於</span>
               
 
-              <time title="創建時間：2020-04-23 18:47:46 / 修改時間：19:57:35" itemprop="dateCreated datePublished" datetime="2020-04-23T18:47:46+08:00">2020-04-23</time>
+              <time title="創建時間：2020-04-23 18:47:46 / 修改時間：20:15:58" itemprop="dateCreated datePublished" datetime="2020-04-23T18:47:46+08:00">2020-04-23</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -203,69 +203,16 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="0-前言"><a href="#0-前言" class="headerlink" title="0. 前言"></a>0. 前言</h1><p>現役筆電感覺快到生命的盡頭了，為了換筆電後可以快速把 Hexo 恢復，就把查到的資料整理起來囉!</p>
+          <h2 id="0-前言"><a href="#0-前言" class="headerlink" title="0. 前言"></a>0. 前言</h2><p>現役筆電感覺快到生命的盡頭了，為了換筆電後可以快速把 Hexo 恢復，就把查到的資料整理起來囉!</p>
 <p>這只是方便我重新架 Hexo 的整理，如果你是被搜尋引擎帶到這且期待詳盡教學的生物，請直接參考最下方的<a href="#資料來源">資料來源</a>，有大神的文章!</p>
-<h1 id="1-Hexo環境"><a href="#1-Hexo環境" class="headerlink" title="1. Hexo環境"></a>1. Hexo環境</h1><ol>
-<li>安裝 Hexo <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm install -g hexo-cli</span><br></pre></td></tr></table></figure></li>
-<li>初始化 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ hexo init &lt;folder&gt;</span><br><span class="line">$ cd &lt;folder&gt;</span><br><span class="line">$ npm install</span><br></pre></td></tr></table></figure>
-
-</li>
-</ol>
-<h1 id="2-發表文章"><a href="#2-發表文章" class="headerlink" title="2. 發表文章"></a>2. 發表文章</h1><ol>
-<li>產生 .md 檔案 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new &lt;nameOfPost&gt;</span><br><span class="line">&#x2F;&#x2F; 若文章 title 有空格請使用&quot;&quot;</span><br></pre></td></tr></table></figure></li>
-<li>修改內文<br> /blog/source/_posts/&lt;nameOfPost&gt;.md<br> 修改 &lt;nameOfPost&gt;.md 的內容即可</li>
-</ol>
-<h1 id="3-更換主題-Next"><a href="#3-更換主題-Next" class="headerlink" title="3. 更換主題(Next)"></a>3. 更換主題(Next)</h1><ol>
-<li>clone 檔案 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git clone https:&#x2F;&#x2F;github.com&#x2F;theme-next&#x2F;hexo-theme-next.git themes&#x2F;next</span><br></pre></td></tr></table></figure></li>
-<li>更改主題<br> 修改 /blog/_config.yml <figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Extensions</span></span><br><span class="line"><span class="comment">## Plugins: https://hexo.io/plugins/</span></span><br><span class="line"><span class="comment">## Themes: https://hexo.io/themes/</span></span><br><span class="line"><span class="attr">theme:</span> <span class="string">next</span></span><br></pre></td></tr></table></figure></li>
-<li>調整主題<ol>
-<li>語言<br> 修改 /blog/_config.yml 以及 /blog/theme/next/_config.yml <figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">language:</span> <span class="string">zh-TW</span></span><br></pre></td></tr></table></figure></li>
-<li>Scheme 設定<br> 修改/blog/theme/next/_config.yml <figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ---------------------------------------------------------------</span></span><br><span class="line"><span class="comment"># Scheme Settings</span></span><br><span class="line"><span class="comment"># ---------------------------------------------------------------</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Schemes</span></span><br><span class="line"><span class="comment">#scheme: Muse</span></span><br><span class="line"><span class="comment">#scheme: Mist</span></span><br><span class="line"><span class="attr">scheme:</span> <span class="string">Pisces</span></span><br><span class="line"><span class="comment">#scheme: Gemini</span></span><br></pre></td></tr></table></figure>
-
-</li>
-</ol>
-</li>
-</ol>
-<h1 id="4-修改基本資料"><a href="#4-修改基本資料" class="headerlink" title="4. 修改基本資料"></a>4. 修改基本資料</h1><p>修改 /blog/_config.yml</p>
-<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Site</span></span><br><span class="line"><span class="attr">title:</span> <span class="string">Yak牽到資工變傻子</span></span><br><span class="line"><span class="attr">subtitle:</span> <span class="string">''</span></span><br><span class="line"><span class="attr">description:</span> <span class="string">''</span></span><br><span class="line"><span class="attr">keywords:</span></span><br><span class="line"><span class="attr">author:</span> <span class="string">Yak</span></span><br><span class="line"><span class="attr">language:</span> <span class="string">zh-TW</span></span><br><span class="line"><span class="attr">timezone:</span> <span class="string">''</span></span><br></pre></td></tr></table></figure>
-
-<h1 id="5-修改-sidebar"><a href="#5-修改-sidebar" class="headerlink" title="5. 修改 sidebar"></a>5. 修改 sidebar</h1><ol>
-<li><p>加上個人個片<br> 修改 /blog/theme/next/_config.yml<br> 在 url: 左方加上圖片位置，若要使用本地圖片，檔案要放在 /blog/source 底下</p>
- <figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">    <span class="comment"># Sidebar Avatar</span></span><br><span class="line"><span class="attr">avatar:</span></span><br><span class="line"><span class="comment"># Replace the default image and set the url here.</span></span><br><span class="line"><span class="attr">url:</span> <span class="string">/uploads/avatar.jpg</span></span><br><span class="line"><span class="comment"># If true, the avatar will be dispalyed in circle.</span></span><br><span class="line"><span class="attr">rounded:</span> <span class="literal">false</span></span><br><span class="line"><span class="comment"># If true, the avatar will be rotated with the cursor.</span></span><br><span class="line"><span class="attr">rotated:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure></li>
-<li><p>社群網站<br> 修改 /blog/theme/next/_config.yml<br> 修改內容後，取消註解</p>
- <figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">social:</span></span><br><span class="line">    <span class="comment">#GitHub: https://github.com/yourname || fab fa-github</span></span><br><span class="line">    <span class="comment">#E-Mail: mailto:yourname@gmail.com || fa fa-envelope</span></span><br><span class="line">    <span class="comment">#Weibo: https://weibo.com/yourname || fab fa-weibo</span></span><br><span class="line">    <span class="comment">#Google: https://plus.google.com/yourname || fab fa-google</span></span><br><span class="line">    <span class="comment">#Twitter: https://twitter.com/yourname || fab fa-twitter</span></span><br><span class="line">    <span class="comment">#FB Page: https://www.facebook.com/yourname || fab fa-facebook</span></span><br><span class="line">    <span class="comment">#StackOverflow: https://stackoverflow.com/yourname || fab fa-stack-overflow</span></span><br><span class="line">    <span class="comment">#YouTube: https://youtube.com/yourname || fab fa-youtube</span></span><br><span class="line">    <span class="comment">#Instagram: https://instagram.com/yourname || fab fa-instagram</span></span><br><span class="line">    <span class="comment">#Skype: skype:yourname?call|chat || fab fa-skype</span></span><br></pre></td></tr></table></figure></li>
-<li><p>加上 tags/categories 分頁</p>
-<ol>
-<li><p>在 sidebar 顯示圖標<br> 修改 /blog/_config.yml<br> 把 categories 取消註解</p>
- <figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">menu:</span></span><br><span class="line">    <span class="attr">home:</span> <span class="string">/</span> <span class="string">||</span> <span class="string">fa</span> <span class="string">fa-home</span></span><br><span class="line">    <span class="comment">#about: /about/ || fa fa-user</span></span><br><span class="line">    <span class="attr">tags:</span> <span class="string">/tags/</span> <span class="string">||</span> <span class="string">fa</span> <span class="string">fa-tags</span></span><br><span class="line">    <span class="attr">categories:</span> <span class="string">/categories/</span> <span class="string">||</span> <span class="string">fa</span> <span class="string">fa-th</span></span><br><span class="line">    <span class="attr">archives:</span> <span class="string">/archives/</span> <span class="string">||</span> <span class="string">fa</span> <span class="string">fa-archive</span></span><br><span class="line">    <span class="comment">#schedule: /schedule/ || fa fa-calendar</span></span><br><span class="line">    <span class="comment">#sitemap: /sitemap.xml || fa fa-sitemap</span></span><br><span class="line">    <span class="comment">#commonweal: /404/ || fa fa-heartbeat</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>建立新頁面</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new page categories</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>修改 /blog/source/categories/index.md</p>
- <figure class="highlight md"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">title: categories</span><br><span class="line">date: 2020-04-23 16:45:38</span><br><span class="line">type: "categories"</span><br><span class="line">---</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>為文章分類<br> 如果 new post 時沒自動跳出「categories:」，就自己加上，也會有效果</p>
- <figure class="highlight md"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">title: Hexo 筆記</span><br><span class="line">date: 2020-04-23 18:47:46</span><br><span class="line">tags:</span><br><span class="line">categories: "學習筆記"</span><br><span class="line">---</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>tags<br> 方法相同</p>
-</li>
-</ol>
-</li>
-</ol>
-<h1 id="6-丟上github"><a href="#6-丟上github" class="headerlink" title="6. 丟上github"></a>6. 丟上github</h1><ol>
-<li>在 github create repository</li>
-<li>安装 deploy git 插件 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure></li>
-<li>修改/blog/_config.yml <figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Deployment</span></span><br><span class="line"><span class="comment">## Docs: https://hexo.io/docs/deployment.html</span></span><br><span class="line"><span class="attr">deploy:</span></span><br><span class="line"><span class="attr">type:</span> <span class="string">git</span></span><br><span class="line"><span class="attr">repo:</span> </span><br><span class="line">    <span class="attr">github:</span> <span class="string">https://github.com/&lt;yourName&gt;/&lt;nameOfRepository&gt;.git</span></span><br></pre></td></tr></table></figure></li>
-<li>deploy<br> 產生靜態網頁後 deploy <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo d -g</span><br></pre></td></tr></table></figure>
-
-</li>
-</ol>
-<h1 id="資料來源"><a href="#資料來源" class="headerlink" title="資料來源"></a>資料來源</h1><ul>
-<li><a href="https://medium.com/@bebebobohaha/%E4%BD%BF%E7%94%A8-hexo-gitpage-%E6%90%AD%E5%BB%BA%E5%80%8B%E4%BA%BA-blog-5c6ed52f23db" target="_blank" rel="noopener">如何搭建個人 Blog 使用 Hexo + Gitpage | Peggy Chan</a></li>
-<li><a href="https://linlif.github.io/2017/05/27/Hexo%E4%BD%BF%E7%94%A8%E6%94%BB%E7%95%A5-%E6%B7%BB%E5%8A%A0%E5%88%86%E7%B1%BB%E5%8F%8A%E6%A0%87%E7%AD%BE/" target="_blank" rel="noopener">Hexo使用攻略-添加分類及標籤 | linlif-blog</a></li>
-</ul>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/04/23/Hexo-%E7%AD%86%E8%A8%98/#more" rel="contents">
+                閱讀全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -309,7 +256,7 @@
               <span class="post-meta-item-text">發表於</span>
               
 
-              <time title="創建時間：2020-04-23 09:32:55 / 修改時間：16:50:25" itemprop="dateCreated datePublished" datetime="2020-04-23T09:32:55+08:00">2020-04-23</time>
+              <time title="創建時間：2020-04-23 09:32:55 / 修改時間：20:15:14" itemprop="dateCreated datePublished" datetime="2020-04-23T09:32:55+08:00">2020-04-23</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -332,16 +279,16 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>Xin chào! Tôi là Yak:)</p>
-<p>選修越南語課已經來到了第二個學期，難度增加許多，課堂後若不複習，上課就聽不懂cô在問什麼，不能再只在課堂上學習了!</p>
-<p>為了避免自己上課時什麼都聽不懂，未來將將課本的14課所教到文法以及我覺得實用/有趣的句子整理在這裡。</p>
-<h1 id="文法"><a href="#文法" class="headerlink" title="文法"></a>文法</h1><ul>
-<li><h2 id="…gi"><a href="#…gi" class="headerlink" title="…gì"></a>…gì</h2><ul>
-<li>em không biết cô nói gì</li>
-</ul>
-</li>
-</ul>
-<h1 id="佳句"><a href="#佳句" class="headerlink" title="佳句"></a>佳句</h1>
+          <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>Xin chào! Tôi là Yak:)</p>
+<p>選修越南語課已經來到了第二個學期，難度增加許多，課堂後若不複習，上課就聽不懂cô在問什麼，不能再只在課堂上學習了!<br>為了避免自己上課時什麼都聽不懂，未來將將課本的14課所教到文法以及我覺得實用/有趣的句子整理在這裡。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/04/23/Ghi-chu-cua-mon-tieng-Viet/#more" rel="contents">
+                閱讀全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
