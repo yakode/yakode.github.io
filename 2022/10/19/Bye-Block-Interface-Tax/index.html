@@ -20,28 +20,35 @@
     var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta property="og:type" content="website">
-<meta property="og:title" content="思考恐懼症">
-<meta property="og:url" content="http://yoursite.com/index.html">
+  <meta name="description" content="bye block interface taxtags: rtlab  psper: ZNS: Avoiding the Block Interface Tax for Flash-based SSDs ◪ 說是筆記，其實只是在嘗試翻譯，以及提出問題並回答罷了◩ ◩ 如果不認識 ZNS SSD，可以先讀這篇 paper，取得一些 background knowledge 後再閱讀這篇筆記 ◪ ◩">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Bye-Block-Interface-Tax">
+<meta property="og:url" content="http://yoursite.com/2022/10/19/Bye-Block-Interface-Tax/index.html">
 <meta property="og:site_name" content="思考恐懼症">
+<meta property="og:description" content="bye block interface taxtags: rtlab  psper: ZNS: Avoiding the Block Interface Tax for Flash-based SSDs ◪ 說是筆記，其實只是在嘗試翻譯，以及提出問題並回答罷了◩ ◩ 如果不認識 ZNS SSD，可以先讀這篇 paper，取得一些 background knowledge 後再閱讀這篇筆記 ◪ ◩">
 <meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/lPkhuF1.png">
+<meta property="og:image" content="https://i.imgur.com/MBPwcT9.png">
+<meta property="article:published_time" content="2022-10-19T11:50:32.891Z">
+<meta property="article:modified_time" content="2022-10-24T06:38:01.025Z">
 <meta property="article:author" content="Yak">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/lPkhuF1.png">
 
-<link rel="canonical" href="http://yoursite.com/">
+<link rel="canonical" href="http://yoursite.com/2022/10/19/Bye-Block-Interface-Tax/">
 
 
 <script id="page-configurations">
   // https://hexo.io/docs/variables.html
   CONFIG.page = {
     sidebar: "",
-    isHome : true,
-    isPost : false,
+    isHome : false,
+    isPost : true,
     lang   : 'zh-TW'
   };
 </script>
 
-  <title>思考恐懼症</title>
+  <title>Bye-Block-Interface-Tax | 思考恐懼症</title>
   
 
 
@@ -149,9 +156,10 @@
         <div class="content-wrap">
           
 
-          <div class="content index posts-expand">
+          <div class="content post posts-expand">
             
-      
+
+    
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
@@ -167,10 +175,9 @@
       <meta itemprop="name" content="思考恐懼症">
     </span>
       <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/10/19/Bye-Block-Interface-Tax/" class="post-title-link" itemprop="url">Bye-Block-Interface-Tax</a>
-        </h2>
+        <h1 class="post-title" itemprop="name headline">
+          Bye-Block-Interface-Tax
+        </h1>
 
         <div class="post-meta">
             <span class="post-meta-item">
@@ -200,7 +207,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="bye-block-interface-tax"><a href="#bye-block-interface-tax" class="headerlink" title="bye block interface tax"></a>bye block interface tax</h1><h6 id="tags-rtlab"><a href="#tags-rtlab" class="headerlink" title="tags: rtlab"></a>tags: <code>rtlab</code></h6><!--'ZNS SSD' 'block interface' 'ZNS interface'-->
+        <h1 id="bye-block-interface-tax"><a href="#bye-block-interface-tax" class="headerlink" title="bye block interface tax"></a>bye block interface tax</h1><h6 id="tags-rtlab"><a href="#tags-rtlab" class="headerlink" title="tags: rtlab"></a>tags: <code>rtlab</code></h6><!--'ZNS SSD' 'block interface' 'ZNS interface'-->
 
 <p>psper: <a href="https://www.usenix.org/conference/atc21/presentation/bjorling" target="_blank" rel="noopener">ZNS: Avoiding the Block Interface Tax for Flash-based SSDs</a></p>
 <p>◪ 說是筆記，其實只是在嘗試翻譯，以及提出問題並回答罷了◩ </br><br>◩ 如果不認識 ZNS SSD，可以先讀<a href="https://ieeexplore.ieee.org/document/9188086" target="_blank" rel="noopener">這篇 paper</a>，取得一些 background knowledge 後再閱讀這篇筆記 ◪ </br><br>◩ 沒有標註來源的引言皆出自 <a href="https://www.usenix.org/conference/atc21/presentation/bjorling" target="_blank" rel="noopener">paper</a> ◪</p>
@@ -493,710 +500,31 @@
 <p><a href="https://www.snia.org/educational-library/end-end-data-placement-zoned-block-devices-2020" target="_blank" rel="noopener">https://www.snia.org/educational-library/end-end-data-placement-zoned-block-devices-2020</a></p>
 </blockquote>
 </div>
-      
     </div>
 
     
     
     
+
       <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2022/10/10/LL-Compaction/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-      <meta itemprop="name" content="Yak">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="思考恐懼症">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/10/10/LL-Compaction/" class="post-title-link" itemprop="url">LL-Compaction</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">發表於</span>
-              
-
-              <time title="創建時間：2022-10-10 13:30:26 / 修改時間：13:35:27" itemprop="dateCreated datePublished" datetime="2022-10-10T13:30:26+08:00">2022-10-10</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分類於</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AD%B8%E7%BF%92%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">學習筆記</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>paper: <a href="https://dl.acm.org/doi/abs/10.1145/3538643.3539741" target="_blank" rel="noopener">Lifetime-leveling LSM-tree compaction for ZNS SSD</a></p>
-<p>待整理</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/10/10/LL-Compaction/#more" rel="contents">
-                閱讀全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
-      
-    </div>
 
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2022/10/10/%E7%82%B8%E5%BB%9A%E6%88%BF%E7%AD%86%E8%A8%98/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-      <meta itemprop="name" content="Yak">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="思考恐懼症">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/10/10/%E7%82%B8%E5%BB%9A%E6%88%BF%E7%AD%86%E8%A8%98/" class="post-title-link" itemprop="url">炸廚房筆記</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">發表於</span>
-              
-
-              <time title="創建時間：2022-10-10 13:30:09 / 修改時間：14:05:45" itemprop="dateCreated datePublished" datetime="2022-10-10T13:30:09+08:00">2022-10-10</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分類於</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E9%9A%A8%E7%AD%86/" itemprop="url" rel="index"><span itemprop="name">隨筆</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="0-紀錄日常"><a href="#0-紀錄日常" class="headerlink" title="0. 紀錄日常"></a>0. 紀錄日常</h3><p>雖然高機率拉肚子，仍然喜歡煮東西給自己、朋友吃。手機相簿不方便回憶，也常常忘記食譜，不如在網路上留點陷阱。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/10/10/%E7%82%B8%E5%BB%9A%E6%88%BF%E7%AD%86%E8%A8%98/#more" rel="contents">
-                閱讀全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
-      
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/10/10/LL-Compaction/" rel="prev" title="LL-Compaction">
+      <i class="fa fa-chevron-left"></i> LL-Compaction
+    </a></div>
+      <div class="post-nav-item"></div>
     </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
       </footer>
+    
   </article>
   
   
   
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2022/09/29/%E6%82%B2%E5%82%B7%E6%BD%9B%E4%BC%8F%E6%9C%9F/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-      <meta itemprop="name" content="Yak">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="思考恐懼症">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/09/29/%E6%82%B2%E5%82%B7%E6%BD%9B%E4%BC%8F%E6%9C%9F/" class="post-title-link" itemprop="url">悲傷潛伏期</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">發表於</span>
-
-              <time title="創建時間：2022-09-29 10:34:24" itemprop="dateCreated datePublished" datetime="2022-09-29T10:34:24+08:00">2022-09-29</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2022-10-10 13:29:35" itemprop="dateModified" datetime="2022-10-10T13:29:35+08:00">2022-10-10</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分類於</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E9%9A%A8%E7%AD%86/" itemprop="url" rel="index"><span itemprop="name">隨筆</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>你是我不會過去的過去。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/09/29/%E6%82%B2%E5%82%B7%E6%BD%9B%E4%BC%8F%E6%9C%9F/#more" rel="contents">
-                閱讀全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2022/05/02/2021%E6%B6%88%E5%A4%B1%E7%9A%84%E5%85%AD%E5%80%8B%E6%9C%88/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-      <meta itemprop="name" content="Yak">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="思考恐懼症">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/05/02/2021%E6%B6%88%E5%A4%B1%E7%9A%84%E5%85%AD%E5%80%8B%E6%9C%88/" class="post-title-link" itemprop="url">2021消失的六個月</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">發表於</span>
-              
-
-              <time title="創建時間：2022-05-02 16:00:06 / 修改時間：16:40:50" itemprop="dateCreated datePublished" datetime="2022-05-02T16:00:06+08:00">2022-05-02</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分類於</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E9%96%B1%E8%AE%80%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">閱讀筆記</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="0-裸奔（意義不明的開頭）"><a href="#0-裸奔（意義不明的開頭）" class="headerlink" title="0. 裸奔（意義不明的開頭）"></a>0. 裸奔（意義不明的開頭）</h3><p>&emsp;&emsp;前幾天讀到一位陌生人的部落格，裡面放著她將近三年的日記，並且持續增加著，好赤裸。小學的時候，我熱衷於在無名小站公開喜怒哀樂，偶爾加上密碼，但又給足密碼提示，期待同學們足夠在乎我。後來，社群媒體興起，我更熱衷於隨時發表自己。覺得無聊了，發文；網購了新東西，發文；和朋友吵架了，發文；覺得媽媽的行為讓自己感到尷尬，發文；夏天了，發文；失眠了，發文……當初建立這個部落格也是為了公開自己，但好赤裸。回頭讀，感尬得頭皮發麻，若只是在自己的日記本（物理）中讀到，尷尬一會就好，在網路上讀到，則是不斷為了到底要不要刪除而焦慮。焦慮到不想再更新部落格，不過當初也有想練表達自己的意圖，所以更新一篇無傷大雅的閱讀紀錄好了。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/05/02/2021%E6%B6%88%E5%A4%B1%E7%9A%84%E5%85%AD%E5%80%8B%E6%9C%88/#more" rel="contents">
-                閱讀全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2022/03/22/hello-world/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-      <meta itemprop="name" content="Yak">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="思考恐懼症">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/03/22/hello-world/" class="post-title-link" itemprop="url">Hello World</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">發表於</span>
-              
-
-              <time title="創建時間：2022-03-22 15:40:21 / 修改時間：16:09:20" itemprop="dateCreated datePublished" datetime="2022-03-22T15:40:21+08:00">2022-03-22</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/03/22/hello-world/#more" rel="contents">
-                閱讀全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/08/04/Deja-Vu-from-Thunderstorm/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-      <meta itemprop="name" content="Yak">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="思考恐懼症">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/08/04/Deja-Vu-from-Thunderstorm/" class="post-title-link" itemprop="url">Deja Vu from Thunderstorm</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">發表於</span>
-              
-
-              <time title="創建時間：2021-08-04 21:24:00 / 修改時間：21:26:43" itemprop="dateCreated datePublished" datetime="2021-08-04T21:24:00+08:00">2021-08-04</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分類於</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E9%9A%A8%E7%AD%86/" itemprop="url" rel="index"><span itemprop="name">隨筆</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>想起自己按掉了7點的鬧鐘，驚醒，不知道現在幾點了，工讀是不是要遲到了。抓起手機看到13:08才想起自己已經下班，在午休了，手機的鬧鐘將在21分鐘後響起。擔心晚上的報告會來不及完成，便提早下床。因精神仍有些不濟，決定先到超商買杯拿鐵敲醒自己。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/08/04/Deja-Vu-from-Thunderstorm/#more" rel="contents">
-                閱讀全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/03/19/%E5%96%AE%E6%96%B9%E5%90%91%E8%AA%8D%E8%AD%98%E7%9A%84%E9%99%8C%E7%94%9F%E4%BA%BA/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-      <meta itemprop="name" content="Yak">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="思考恐懼症">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/03/19/%E5%96%AE%E6%96%B9%E5%90%91%E8%AA%8D%E8%AD%98%E7%9A%84%E9%99%8C%E7%94%9F%E4%BA%BA/" class="post-title-link" itemprop="url">單方向認識的陌生人</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">發表於</span>
-              
-
-              <time title="創建時間：2021-03-19 17:13:43 / 修改時間：17:22:49" itemprop="dateCreated datePublished" datetime="2021-03-19T17:13:43+08:00">2021-03-19</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分類於</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E9%9A%A8%E7%AD%86/" itemprop="url" rel="index"><span itemprop="name">隨筆</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="0-我總是看著陌生人一個一個消失"><a href="#0-我總是看著陌生人一個一個消失" class="headerlink" title="0. 我總是看著陌生人一個一個消失"></a>0. 我總是看著陌生人一個一個消失</h3><p>昨天，手裡拿著垃圾要去教室上課，出房門時清潔阿姨剛好經過。「那是垃圾嗎?」阿姨彎下腰撿拾一片白色物體，我看了看地上的白色物體說：「應該是油漆掉下來吧?」「我是說你手上的東西，放進來。」阿姨指著推車上的垃圾袋，他臉上沒有笑容，說出來的話也沒多親切，但我覺得好溫暖。阿姨讓我想到另一個清潔阿姨，好久沒見到了。我好像總是在單方向認識人，然後靜靜地看著他們一個一個從我的日常中消失。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/03/19/%E5%96%AE%E6%96%B9%E5%90%91%E8%AA%8D%E8%AD%98%E7%9A%84%E9%99%8C%E7%94%9F%E4%BA%BA/#more" rel="contents">
-                閱讀全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/11/12/%E7%82%BA%E4%BB%80%E9%BA%BC%E4%B8%8D%E5%96%9C%E6%AD%A1%E6%88%91/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-      <meta itemprop="name" content="Yak">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="思考恐懼症">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/11/12/%E7%82%BA%E4%BB%80%E9%BA%BC%E4%B8%8D%E5%96%9C%E6%AD%A1%E6%88%91/" class="post-title-link" itemprop="url">為什麼不喜歡我</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">發表於</span>
-
-              <time title="創建時間：2020-11-12 19:09:34" itemprop="dateCreated datePublished" datetime="2020-11-12T19:09:34+08:00">2020-11-12</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-03-19 17:11:27" itemprop="dateModified" datetime="2021-03-19T17:11:27+08:00">2021-03-19</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分類於</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E9%9A%A8%E7%AD%86/" itemprop="url" rel="index"><span itemprop="name">隨筆</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="0-平常上課"><a href="#0-平常上課" class="headerlink" title="0. 平常上課"></a>0. 平常上課</h3><p>首先，我必須承認我並沒有時時刻刻認真聽講，做到一百分的尊重老師，我會跟隔壁的朋友說話。但也不是每一句話都是閒聊，因為朋友是馬來西亞人，馬來語又跟印尼語相似，我會常常詢問我不懂的。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/11/12/%E7%82%BA%E4%BB%80%E9%BA%BC%E4%B8%8D%E5%96%9C%E6%AD%A1%E6%88%91/#more" rel="contents">
-                閱讀全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/11/10/%E5%8D%B0%E5%B0%BC%E8%AA%9E%E7%AD%86%E8%A8%98/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-      <meta itemprop="name" content="Yak">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="思考恐懼症">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/11/10/%E5%8D%B0%E5%B0%BC%E8%AA%9E%E7%AD%86%E8%A8%98/" class="post-title-link" itemprop="url">印尼語筆記</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">發表於</span>
-
-              <time title="創建時間：2020-11-10 15:32:37" itemprop="dateCreated datePublished" datetime="2020-11-10T15:32:37+08:00">2020-11-10</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2020-11-12 09:04:02" itemprop="dateModified" datetime="2020-11-12T09:04:02+08:00">2020-11-12</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分類於</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AD%B8%E7%BF%92%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">學習筆記</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>學語言真難</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/11/10/%E5%8D%B0%E5%B0%BC%E8%AA%9E%E7%AD%86%E8%A8%98/#more" rel="contents">
-                閱讀全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-
-  
-  <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一頁"></i></a>
-  </nav>
 
 
 
@@ -1248,6 +576,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#bye-block-interface-tax"><span class="nav-number">1.</span> <span class="nav-text">bye block interface tax</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#tags-rtlab"><span class="nav-number">1.0.0.0.0.1.</span> <span class="nav-text">tags: rtlab</span></a></li></ol></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-emsp-Introduction"><span class="nav-number">1.1.</span> <span class="nav-text">1 &amp;emsp; Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-emsp-The-Zoned-Storage-Model"><span class="nav-number">1.2.</span> <span class="nav-text">2 &amp;emsp; The Zoned Storage Model</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-emsp-The-Block-Interface-Tax"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 &amp;emsp; The Block Interface Tax</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-emsp-Existing-Tax-Reduction-Strategics"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 &amp;emsp; Existing Tax-Reduction Strategics</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-emsp-Tax-free-Storage-with-Zones"><span class="nav-number">1.2.3.</span> <span class="nav-text">2.3 &amp;emsp; Tax-free Storage with Zones</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-emsp-Evolving-toward-ZNS"><span class="nav-number">1.3.</span> <span class="nav-text">3 &amp;emsp; Evolving toward ZNS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-emsp-Hardware-Impact"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 &amp;emsp; Hardware Impact</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-emsp-Host-Software-Adoption"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2 &amp;emsp; Host Software Adoption</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-emsp-Implement"><span class="nav-number">1.4.</span> <span class="nav-text">4 &amp;emsp; Implement</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-emsp-General-Linux-Support"><span class="nav-number">1.4.1.</span> <span class="nav-text">4.1 &amp;emsp; General Linux Support</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-emsp-RocksDB-Zone-Support"><span class="nav-number">1.4.2.</span> <span class="nav-text">4.2 &amp;emsp; RocksDB Zone Support</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-2-1-emsp-ZenFS"><span class="nav-number">1.4.2.1.</span> <span class="nav-text">4.2.1 &amp;emsp; ZenFS</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Evaluation"><span class="nav-number">1.5.</span> <span class="nav-text">Evaluation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ohter-Questions"><span class="nav-number">1.6.</span> <span class="nav-text">Ohter Questions</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
