@@ -20,22 +20,31 @@
     var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="bye block interface taxtags: rtlab  psper: ZNS: Avoiding the Block Interface Tax for Flash-based SSDs ◪ 說是筆記，其實只是在嘗試翻譯，以及提出問題並回答罷了◩ ◩ 如果不認識 ZNS SSD，可以先讀這篇 paper，取得一些 background knowledge 後再閱讀這篇筆記 ◪ ◩">
+  <meta name="description" content="psper: ZNS: Avoiding the Block Interface Tax for Flash-based SSDs 待整理實驗部分文章及圖片">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Bye-Block-Interface-Tax">
-<meta property="og:url" content="http://yoursite.com/2022/10/19/Bye-Block-Interface-Tax/index.html">
+<meta property="og:title" content="Bye Block Interface Tax">
+<meta property="og:url" content="http://yoursite.com/2022/10/24/Bye-Block-Interface-Tax/index.html">
 <meta property="og:site_name" content="思考恐懼症">
-<meta property="og:description" content="bye block interface taxtags: rtlab  psper: ZNS: Avoiding the Block Interface Tax for Flash-based SSDs ◪ 說是筆記，其實只是在嘗試翻譯，以及提出問題並回答罷了◩ ◩ 如果不認識 ZNS SSD，可以先讀這篇 paper，取得一些 background knowledge 後再閱讀這篇筆記 ◪ ◩">
+<meta property="og:description" content="psper: ZNS: Avoiding the Block Interface Tax for Flash-based SSDs 待整理實驗部分文章及圖片">
 <meta property="og:locale" content="zh_TW">
 <meta property="og:image" content="https://i.imgur.com/lPkhuF1.png">
 <meta property="og:image" content="https://i.imgur.com/MBPwcT9.png">
-<meta property="article:published_time" content="2022-10-19T11:50:32.891Z">
-<meta property="article:modified_time" content="2022-10-24T06:38:01.025Z">
+<meta property="article:published_time" content="2022-10-24T06:42:26.000Z">
+<meta property="article:modified_time" content="2022-10-24T06:44:01.965Z">
 <meta property="article:author" content="Yak">
+<meta property="article:tag" content="ZNS SSD">
+<meta property="article:tag" content="LSM-tree">
+<meta property="article:tag" content="block interface">
+<meta property="article:tag" content="ZNS inerface">
+<meta property="article:tag" content="file  system">
+<meta property="article:tag" content="ZenFS">
+<meta property="article:tag" content="f2fs">
+<meta property="article:tag" content="fio">
+<meta property="article:tag" content="Linux">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://i.imgur.com/lPkhuF1.png">
 
-<link rel="canonical" href="http://yoursite.com/2022/10/19/Bye-Block-Interface-Tax/">
+<link rel="canonical" href="http://yoursite.com/2022/10/24/Bye-Block-Interface-Tax/">
 
 
 <script id="page-configurations">
@@ -48,7 +57,7 @@
   };
 </script>
 
-  <title>Bye-Block-Interface-Tax | 思考恐懼症</title>
+  <title>Bye Block Interface Tax | 思考恐懼症</title>
   
 
 
@@ -163,7 +172,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2022/10/19/Bye-Block-Interface-Tax/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2022/10/24/Bye-Block-Interface-Tax/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/uploads/avatar.jpg">
@@ -176,7 +185,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Bye-Block-Interface-Tax
+          Bye Block Interface Tax
         </h1>
 
         <div class="post-meta">
@@ -185,16 +194,19 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">發表於</span>
+              
 
-              <time title="創建時間：2022-10-19 19:50:32" itemprop="dateCreated datePublished" datetime="2022-10-19T19:50:32+08:00">2022-10-19</time>
+              <time title="創建時間：2022-10-24 14:42:26 / 修改時間：14:44:01" itemprop="dateCreated datePublished" datetime="2022-10-24T14:42:26+08:00">2022-10-24</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2022-10-24 14:38:01" itemprop="dateModified" datetime="2022-10-24T14:38:01+08:00">2022-10-24</time>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
               </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%B8%E7%BF%92%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">學習筆記</span></a>
+                </span>
+            </span>
 
           
 
@@ -207,10 +219,11 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="bye-block-interface-tax"><a href="#bye-block-interface-tax" class="headerlink" title="bye block interface tax"></a>bye block interface tax</h1><h6 id="tags-rtlab"><a href="#tags-rtlab" class="headerlink" title="tags: rtlab"></a>tags: <code>rtlab</code></h6><!--'ZNS SSD' 'block interface' 'ZNS interface'-->
+        <p>psper: <a href="https://www.usenix.org/conference/atc21/presentation/bjorling" target="_blank" rel="noopener">ZNS: Avoiding the Block Interface Tax for Flash-based SSDs</a></p>
+<p>待整理實驗部分文章及圖片</p>
+<a id="more"></a>
 
-<p>psper: <a href="https://www.usenix.org/conference/atc21/presentation/bjorling" target="_blank" rel="noopener">ZNS: Avoiding the Block Interface Tax for Flash-based SSDs</a></p>
-<p>◪ 說是筆記，其實只是在嘗試翻譯，以及提出問題並回答罷了◩ </br><br>◩ 如果不認識 ZNS SSD，可以先讀<a href="https://ieeexplore.ieee.org/document/9188086" target="_blank" rel="noopener">這篇 paper</a>，取得一些 background knowledge 後再閱讀這篇筆記 ◪ </br><br>◩ 沒有標註來源的引言皆出自 <a href="https://www.usenix.org/conference/atc21/presentation/bjorling" target="_blank" rel="noopener">paper</a> ◪</p>
+<p>◪ 說是筆記，其實只是在嘗試翻譯，以及提出問題並回答罷了◩<br>◩ 如果不認識 ZNS SSD，可以先讀<a href="https://ieeexplore.ieee.org/document/9188086" target="_blank" rel="noopener">這篇 paper</a>，取得一些 background knowledge 後再閱讀這篇筆記 ◪<br>◩ 沒有標註來源的引言皆出自 <a href="https://www.usenix.org/conference/atc21/presentation/bjorling" target="_blank" rel="noopener">paper</a> ◪</p>
 <div style="border:#DDDDDD 3px dashed; padding:3px">這是問題框框</div>
 
 <h2 id="1-emsp-Introduction"><a href="#1-emsp-Introduction" class="headerlink" title="1 &emsp; Introduction"></a>1 &emsp; Introduction</h2><p>&emsp;&emsp;”block interface” 給 host 看到的 storage device 會是一個可以以任何順序讀/寫/複寫且尺寸固定的一維陣列，隱藏了硬碟的特性，簡單化 host 的操作，在以前表現得很好，但是不適合 flash-based SSD。</p>
@@ -507,6 +520,17 @@
     
 
       <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/ZNS-SSD/" rel="tag"># ZNS SSD</a>
+              <a href="/tags/LSM-tree/" rel="tag"># LSM-tree</a>
+              <a href="/tags/block-interface/" rel="tag"># block interface</a>
+              <a href="/tags/ZNS-inerface/" rel="tag"># ZNS inerface</a>
+              <a href="/tags/file-system/" rel="tag"># file  system</a>
+              <a href="/tags/ZenFS/" rel="tag"># ZenFS</a>
+              <a href="/tags/f2fs/" rel="tag"># f2fs</a>
+              <a href="/tags/fio/" rel="tag"># fio</a>
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+          </div>
 
         
 
@@ -576,7 +600,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#bye-block-interface-tax"><span class="nav-number">1.</span> <span class="nav-text">bye block interface tax</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#tags-rtlab"><span class="nav-number">1.0.0.0.0.1.</span> <span class="nav-text">tags: rtlab</span></a></li></ol></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-emsp-Introduction"><span class="nav-number">1.1.</span> <span class="nav-text">1 &amp;emsp; Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-emsp-The-Zoned-Storage-Model"><span class="nav-number">1.2.</span> <span class="nav-text">2 &amp;emsp; The Zoned Storage Model</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-emsp-The-Block-Interface-Tax"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 &amp;emsp; The Block Interface Tax</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-emsp-Existing-Tax-Reduction-Strategics"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 &amp;emsp; Existing Tax-Reduction Strategics</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-emsp-Tax-free-Storage-with-Zones"><span class="nav-number">1.2.3.</span> <span class="nav-text">2.3 &amp;emsp; Tax-free Storage with Zones</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-emsp-Evolving-toward-ZNS"><span class="nav-number">1.3.</span> <span class="nav-text">3 &amp;emsp; Evolving toward ZNS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-emsp-Hardware-Impact"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 &amp;emsp; Hardware Impact</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-emsp-Host-Software-Adoption"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2 &amp;emsp; Host Software Adoption</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-emsp-Implement"><span class="nav-number">1.4.</span> <span class="nav-text">4 &amp;emsp; Implement</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-emsp-General-Linux-Support"><span class="nav-number">1.4.1.</span> <span class="nav-text">4.1 &amp;emsp; General Linux Support</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-emsp-RocksDB-Zone-Support"><span class="nav-number">1.4.2.</span> <span class="nav-text">4.2 &amp;emsp; RocksDB Zone Support</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-2-1-emsp-ZenFS"><span class="nav-number">1.4.2.1.</span> <span class="nav-text">4.2.1 &amp;emsp; ZenFS</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Evaluation"><span class="nav-number">1.5.</span> <span class="nav-text">Evaluation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ohter-Questions"><span class="nav-number">1.6.</span> <span class="nav-text">Ohter Questions</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-emsp-Introduction"><span class="nav-number">1.</span> <span class="nav-text">1 &amp;emsp; Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-emsp-The-Zoned-Storage-Model"><span class="nav-number">2.</span> <span class="nav-text">2 &amp;emsp; The Zoned Storage Model</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-emsp-The-Block-Interface-Tax"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 &amp;emsp; The Block Interface Tax</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-emsp-Existing-Tax-Reduction-Strategics"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 &amp;emsp; Existing Tax-Reduction Strategics</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-emsp-Tax-free-Storage-with-Zones"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 &amp;emsp; Tax-free Storage with Zones</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-emsp-Evolving-toward-ZNS"><span class="nav-number">3.</span> <span class="nav-text">3 &amp;emsp; Evolving toward ZNS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-emsp-Hardware-Impact"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 &amp;emsp; Hardware Impact</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-emsp-Host-Software-Adoption"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 &amp;emsp; Host Software Adoption</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-emsp-Implement"><span class="nav-number">4.</span> <span class="nav-text">4 &amp;emsp; Implement</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-emsp-General-Linux-Support"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 &amp;emsp; General Linux Support</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-emsp-RocksDB-Zone-Support"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 &amp;emsp; RocksDB Zone Support</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-2-1-emsp-ZenFS"><span class="nav-number">4.2.1.</span> <span class="nav-text">4.2.1 &amp;emsp; ZenFS</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Evaluation"><span class="nav-number">5.</span> <span class="nav-text">Evaluation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ohter-Questions"><span class="nav-number">6.</span> <span class="nav-text">Ohter Questions</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -605,7 +629,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-count">16</span>
         <span class="site-state-item-name">標籤</span></a>
       </div>
   </nav>

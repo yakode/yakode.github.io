@@ -155,7 +155,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2022/10/19/Bye-Block-Interface-Tax/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2022/10/24/Bye-Block-Interface-Tax/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/uploads/avatar.jpg">
@@ -169,7 +169,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2022/10/19/Bye-Block-Interface-Tax/" class="post-title-link" itemprop="url">Bye-Block-Interface-Tax</a>
+            <a href="/2022/10/24/Bye-Block-Interface-Tax/" class="post-title-link" itemprop="url">Bye Block Interface Tax</a>
         </h2>
 
         <div class="post-meta">
@@ -178,16 +178,19 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">發表於</span>
+              
 
-              <time title="創建時間：2022-10-19 19:50:32" itemprop="dateCreated datePublished" datetime="2022-10-19T19:50:32+08:00">2022-10-19</time>
+              <time title="創建時間：2022-10-24 14:42:26 / 修改時間：14:44:01" itemprop="dateCreated datePublished" datetime="2022-10-24T14:42:26+08:00">2022-10-24</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2022-10-24 14:38:01" itemprop="dateModified" datetime="2022-10-24T14:38:01+08:00">2022-10-24</time>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
               </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%B8%E7%BF%92%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">學習筆記</span></a>
+                </span>
+            </span>
 
           
 
@@ -200,299 +203,16 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="bye-block-interface-tax"><a href="#bye-block-interface-tax" class="headerlink" title="bye block interface tax"></a>bye block interface tax</h1><h6 id="tags-rtlab"><a href="#tags-rtlab" class="headerlink" title="tags: rtlab"></a>tags: <code>rtlab</code></h6><!--'ZNS SSD' 'block interface' 'ZNS interface'-->
-
-<p>psper: <a href="https://www.usenix.org/conference/atc21/presentation/bjorling" target="_blank" rel="noopener">ZNS: Avoiding the Block Interface Tax for Flash-based SSDs</a></p>
-<p>◪ 說是筆記，其實只是在嘗試翻譯，以及提出問題並回答罷了◩ </br><br>◩ 如果不認識 ZNS SSD，可以先讀<a href="https://ieeexplore.ieee.org/document/9188086" target="_blank" rel="noopener">這篇 paper</a>，取得一些 background knowledge 後再閱讀這篇筆記 ◪ </br><br>◩ 沒有標註來源的引言皆出自 <a href="https://www.usenix.org/conference/atc21/presentation/bjorling" target="_blank" rel="noopener">paper</a> ◪</p>
-<div style="border:#DDDDDD 3px dashed; padding:3px">這是問題框框</div>
-
-<h2 id="1-emsp-Introduction"><a href="#1-emsp-Introduction" class="headerlink" title="1 &emsp; Introduction"></a>1 &emsp; Introduction</h2><p>&emsp;&emsp;”block interface” 給 host 看到的 storage device 會是一個可以以任何順序讀/寫/複寫且尺寸固定的一維陣列，隱藏了硬碟的特性，簡單化 host 的操作，在以前表現得很好，但是不適合 flash-based SSD。</p>
-<p>&emsp;&emsp;要讓 SSD 可以支援 block interface 會有不小的 cost，因為 flash 不能直接當成一維陣列來看，flash 的儲存空間會被分為數個 blocks，block 中只能執行 sequential write，而 block 的空間又被區分為 pages，page 為最小寫入單位。造成 cost 的主要原因是 flash 的其中一個物理特性: erase-before-write，儲存空間並不能直接被複寫，需要以 block 為單位進行 erase 後，才可以再次寫入資料，也因此有 garbage collection 這個機制來回收儲存空間。</p>
-<p>&emsp;&emsp;由於 flash 在寫入時有上述限制，導致 SSD 與 block interface 有 mismatch，而這些 mismatch 需要 FTL 來當溝通的橋樑，使 SSD 可以執行 block inter face 提供給host 的功能。FTL 使用大量的 DRAM 來儲存 logical-to-physical page mapping tabele，使得 SSD 能處理 block interface 提供給 host 的複寫功能。FTL 也保留一部分的儲存空間作為 “over-provisioning”，來降低 garbage collection 對於 performance 的影響。</p>
-<p>&emsp;&emsp;The NVMe Zoned Namespace Command Set specification 是一款為 ZNS SSD 設計的新 interface standard，這篇 paper 會介紹 ZNS interface，以及說明其如何影響 SSD 的軟/韌體和 host 的軟體。</p>
-<p><strong>§2</strong><br>&emsp; 描述 ZNS interface，並說明其如何避免 block interface tax<br><strong>§3.1</strong><br>&emsp; 描述 ZNS device 為了降低 performance unpredictability 以及減少 in-device sources 而捨棄的責任<br><strong>§3.2</strong><br>&emsp; 描述 ZNS 預期得到的結果: 讓 host 以 erase block 為單位管理儲存資料; 將 FTL 的責任轉移給 host 相較於集合 data mapping and plament 來得沒效率。<br><strong>§4</strong><br>&emsp; 研究團隊為使 Linux kernel, fio benchmark tool, f2fs file system, RocksDB key-value store 支援 ZNS 所付出的努力<br><strong>§5.1</strong><br>&emsp; 實驗顯示 ZNS SSD 相較於 block-interface SSD，有 2.7x 的 throughput，以及降低 64% 的 random read latency<br><strong>§5.2</strong><br>&emsp; 實驗顯示當 RocksDB 或 f2fs 跑在 ZNS interface 上時，都能達到比跑在 block interface 上時更高的 performance; 當 RocksDB 利用 ZenFS 直接跑在 ZNS SSD 上時，也能得到比 RocksDB 透過 file system 跑在 block-interface 更好的 performance</p>
-<h2 id="2-emsp-The-Zoned-Storage-Model"><a href="#2-emsp-The-Zoned-Storage-Model" class="headerlink" title="2 &emsp; The Zoned Storage Model"></a>2 &emsp; The Zoned Storage Model</h2><p>&emsp;&emsp;The block interface 是設計給當時最常被使用的 HDD，它並不適合 SSD 底層的 flash，但 block interface 提供的 semantics (可以想成 interface 提供給 host 的功能) 隨著時間變成了不成文的規定，大家都用這套規則。於是 SSD 推出時，添加了複雜的韌體 (FTL) 來處理 SSD 跟 block interface 之間的 mismatch。</p>
-<p><strong>§2.1</strong> The block interface 為 SSD 增加的「稅」<br><strong>§2.2</strong> 現有的減稅方法<br><strong>§2.3</strong> zoned storage 的基本特性</p>
-<div style="border:#DDDDDD 3px dashed; padding:3px">
-
-<p><strong>What is “the semantics provided by the interface”?</strong></p>
-<p><em>可以想成 interface 提供什麼功能，比如 sequential write、random read 等</em></p>
-<blockquote>
-<p>For decades, storage devices have exposed their host capacity as a one-dimensional array of fixed-size data blocks. Through this block interface, data organized in a block could be read, written, or overwritten in any order. This interface was designed to closely track the characteristics of the most popular devices at the time: hard disk drives (HDDs). Over time, <strong>the semantics provided by this interface</strong> became an unwritten contract that applications came to depend on.   </p>
-</blockquote>
-</div>
-
-<h3 id="2-1-emsp-The-Block-Interface-Tax"><a href="#2-1-emsp-The-Block-Interface-Tax" class="headerlink" title="2.1 &emsp; The Block Interface Tax"></a>2.1 &emsp; The Block Interface Tax</h3><p>&emsp;&emsp;SSD 底下的 empty flash page 可以被寫入資料，但寫入一次後，就不可以 overwrite，必須先以 erase block 的單位進行 erase，才可以再次被寫入資料。</p>
-<p>&emsp;&emsp;如果 SSD 是透過 block interface 被 host 使用，那就必須要有 FTL 利用 write-anywhere approach、mapping table 來處理 in-place update。FTL 也利用 garbage collection 來回收釘子戶資料霸佔的空間，同時注意 flash 的 wearage。</p>
-<p>&emsp;&emsp;FTL 會嚴重影響 performance，為了避免 media limitation，in-place update 的資料會直接被寫到下一個可以寫的位子。也因此，host 失去了 data placement 的控制權。另外，隨著資料的寫入與捨棄，block 中會同時有 valid data 跟 invalid data，為了重新利用 invalid data 佔據的空間，就會需要 garbage collection。然而，garbage collection 會對之後的 requests 造成 performance unpredicability。</p>
-<p>&emsp;&emsp;為了降低 garbage collection 對效能的影響，有了 “over-provisioning” 的出現。over-provisioning 是指 SSD 留一些容量不告訴 host，將空間留給 garbage collection 使用。假設 OP 為 7%，SSD 告訴 host 有 100 的空間，事實上 SSD 有 107 的空間。因為 host 以為的容量比較低，它就不會寫那麼多資料，SSD 就可以有更多空間處理 garbage collection。至於 SSD 如何維護 OP，就要看 FTL 的設計。</p>
-<p>&emsp;&emsp;而 logical to physical address 的 mapping table 則需要額外的 DRAM 來儲存。</p>
-<p>&emsp;&emsp;DRAM 以及 over-provisioning 是 SSD 中最貴的元素，提高了單位容量的成本。</p>
-<p>&emsp;&emsp;小結: 為了處理 SSD 跟 block interface 之間的 mismatch，需要 DRAM 以及 over-provisioning，這兩者的成本很高，提高了 SSD 單位容量的成本。</p>
-<div style="border:#DDDDDD 3px dashed; padding:3px">
-
-<p><strong>What is the media limitation?</strong></p>
-<p><em>應該是在指 flash 這個<strong>硬體</strong>的限制</em></p>
-<blockquote>
-<p>The FTL impacts performance and operational costs considerably. To avoid <strong>the media limitations</strong> for in-place updates, each LBA write is directed to the next available location. Thus, the host relinquishes control of physical data placement to the FTL implementation. Moreover, older, stale versions of the data must be garbage collected, leading to performance unpredictability [1, 10] for ongoing operations.</p>
-</blockquote>
-</div>
-</br>
-<div style="border:#DDDDDD 3px dashed; padding:3px">
-
-<p><strong>What are the mismatchs between the SSD and the block interface?</strong></p>
-<p><em>mismatch是指什麼？可以想成是認知的不同。block interface 會讓 host 覺得記憶體是 one dimension array，可以 random read/write/overwrite，但其實 SSD 的結構有 block、page，block 中又有 sequential write constraint，寫入最小單位為 page，又有 erase-before-write 的特性</em></p>
-<blockquote>
-<p>These costs are due to a mismatch between the operations allowed and the nature of the underlying flash media. Although individual logical blocks can be written to flash, the medium must be erased at the granularity of larger units called erase blocks.</p>
-</blockquote>
-<blockquote>
-<p>For an SSD to expose the block interface, an FTL must manage functionality such as in-place updates using a write-anywhere approach, mapping host logical block addresses (LBAs) to physical device pages, garbage collecting stale data, and ensuring even wear of erase blocks.</p>
-</blockquote>
-</div>
-
-<h3 id="2-2-emsp-Existing-Tax-Reduction-Strategics"><a href="#2-2-emsp-Existing-Tax-Reduction-Strategics" class="headerlink" title="2.2 &emsp; Existing Tax-Reduction Strategics"></a>2.2 &emsp; Existing Tax-Reduction Strategics</h3><p><strong>Stream SSDs</strong><br>&emsp;&emsp;host 可以在 write command 中放入 “stream hint”，讓 SSD 根據 hint 將 data 放入不同 erase blocks。如果 host 給的 hint 足夠好，擁有不同 lifetime 的 data 就可以被分開，進而減少 garbage collection。然而，如果 host 沒有給出正確的 hint，就會與傳統 SSD 差不多，需要 OP 跟 DRAM 來減少時間上的 overhead。</p>
-<p><strong>Open-Channel SSDs</strong><br>&emsp;&emsp;host 跟 SSD 共同管理一組擁有連續 LBA 的 chunks，SSD 可以對 host 公開這些 chunks，使其與 media 的 physical erase block boundaries 對齊，藉此減少 in-device garbage collection，同時減少對於 DRAM 以及 over-provisioning 的需求。data placement 的責任被轉移給 host，host 同時需要處理 wear-leveling。host 需要管理很多事情，會很難被 interface 採納，需要軟體更新。</p>
-<p>&emsp;&emsp;我自己對 OCSSD 的理解是，host 可以知道 data 實際是怎麼在 flash 中擺放，以及多了 data placement 跟 request scheduling 的控制權。</p>
-<p>↓ 這看起來像酷酷的標語 ↓<br><code>ZNS aims to eliminate the mismatch between SSD media and the device interface.</code><br>↑ 這看起來像酷酷的標語 ↑</p>
-<h3 id="2-3-emsp-Tax-free-Storage-with-Zones"><a href="#2-3-emsp-Tax-free-Storage-with-Zones" class="headerlink" title="2.3 &emsp; Tax-free Storage with Zones"></a>2.3 &emsp; Tax-free Storage with Zones</h3><p>&emsp;&emsp;將 SSD 的 logical address space 切塊，每一塊都是一個 “zone”。zone 可以 random read，但只能 sequential write，且如果要 erase，就要整塊 erase。</p>
-<p>&emsp;&emsp;The sequential write constraint 靠著 per-zone state machine 跟 write pointer 來被遵守。（每個 zone 都有自己的 state machine 跟 write pointer）</p>
-<p><strong>The State Machine</strong><br>Zone 有四種 state：</p>
-<ol>
-<li>EMPTY</li>
-<li>OPEN</li>
-<li>CLOSED</li>
-<li>FULL</li>
-</ol>
-<p>&emsp;&emsp;最一開始，初來乍到無時無刻都想睡覺的世界，大家（zone 們）都還沒被寫資料，都在空空的 EMPTY state。後來 host 開始丟 write request 給 SSD，就會有法選之 zone，被叫去處理 write request，這時被選中的 zone 就會進到 OPEN state，歡迎大家（host 有選擇被用什麼代名詞稱呼的權利，他喜歡被叫「大家」）來寫它，直到被填滿資料，進到 FULL state，休息時間拒絕被騷擾。</p>
-<p>&emsp;&emsp;世界的資源(eg write buffer)有限，能夠同時被寫資料的 zone 有限，後來被選上的 zone 有最新的任務在身，它比較重要。如果資源不夠了，目前沒事做的老 zone 就要被冰冷凍庫，進到 CLOSED state，有事要做再被叫醒。</p>
-<p>&emsp;&emsp;萬一大家都被填滿（FULL），跑去休息了怎麼辦！？在萬劫不復之前，挑一個 zone 來清除記憶（有用的記憶寫到別的 zone 存好，比如記得睡覺；沒用的就丟掉，比如微積分），讓它返老回春到 EMPTY state，繼續用。</p>
-<blockquote>
-<p>due to device resource or media limitations. If the limit is reached and the host attempts to write to a new zone, another zone must be transitioned from the OPEN to the CLOSED state, freeing on-device resources such as write buffers.</p>
-</blockquote>
-<p><em>可以同時在 OPEN state 的 zone 數量有限。</em></p>
-<blockquote>
-<p>Due to the nature of flash-based SSDs, there is a strict limit on the number of zones that can be active simultaneously, i.e., either in OPEN or CLOSED state.</p>
-</blockquote>
-<p><em>可以同時在 OPEN state 或 CLOSED state 的 active zone 數量也有限。</em></p>
-<p><strong>The write pointer</strong></p>
-<p>&emsp;&emsp;以下簡稱 the write pointer 為 WP。WP 會指向下一個可以寫的 LBA，且只有 zone 在 EMPTY 或 OPEN state 時有效。每次成功寫入後，WP會往前一步。那什麼時候會寫入失敗呢？</p>
-<ol>
-<li>write request 開頭的地方不是 WP 指的 LBA（不從 WP 指向的LBA 開始寫入資料）</li>
-<li>zone 在 FULL state</li>
-</ol>
-<p>&emsp;&emsp;如果 zone 被 reset，回到 EMPTY state，WP 會回到 zone 中的第一個 LBA。</p>
-<p>&emsp;&emsp;為了讓 ZNS interface 與 flash-based SSD 合作，ZNS interface 採用了兩個概念:</p>
-<p><strong>writable zone capacity</strong></p>
-<p>&emsp;&emsp;zone 可以把自己的 LBAs 劃分成 writable 跟 non-writable，zone writabla capacity 的大小可以小於 zone size，使得 zone capacity 可以是 2 的倍數。</p>
-<p><strong>active zone concept</strong></p>
-<p>&emsp;&emsp;因為 flash 的物理特性(eg program disturb)，能同時存在的 active zone (OPEN or CLOSED)數量有限。</p>
-<div style="border:#DDDDDD 3px dashed; padding:3px">
-
-<p><strong>What is the process of the SSD recovery?</strong></p>
-<blockquote>
-<p>The zone’s state and write pointer eliminate the need for host software to keep track of the last LBA written to a zone simplifying recovery, e.g., after an improper shutdown.</p>
-</blockquote>
-<p>（要查一下其他 SSD 怎麼處理 recovery）</p>
-</div>
-
-<h2 id="3-emsp-Evolving-toward-ZNS"><a href="#3-emsp-Evolving-toward-ZNS" class="headerlink" title="3 &emsp; Evolving toward ZNS"></a>3 &emsp; Evolving toward ZNS</h2><p><strong>§3.1</strong> 硬體怎麼影響效能<br><strong>§3.2</strong> ZNS interface 拿去接接看不用的應用？</p>
-<h3 id="3-1-emsp-Hardware-Impact"><a href="#3-1-emsp-Hardware-Impact" class="headerlink" title="3.1 &emsp; Hardware Impact"></a>3.1 &emsp; Hardware Impact</h3><p>&emsp;&emsp;ZNS SSD 將傳統 SSD 的 FTL 處理 random write 的相關責任轉移給 host，SSD 不用處理 randome write，ZNS interface 也不允許 random write，flash 跟 interface 的 mismatch 也就消除了。</p>
-<p>&emsp;&emsp;garbage collection 的搬移 valid data 責任也轉移給 host，代表 write amplification on the device 被消除了。write amplification 的定義為 host write/device write，因為改由 host 來搬移 valid data(host 發起 write request 來搬資料)，就不算 device 有多寫資料，write amplication 就被消除了。(其實該多寫的資料還是有寫，但依照定義來看，的確是沒有 write amplication 了…)</p>
-<p>&emsp;&emsp;另外，因為是 host 來處理資料搬移，valid data 可以暫存在 memory，SSD 也不用預留空間來協助 garbage collection，over-privisioning 也就不需要了。</p>
-<p>&emsp;&emsp;ZNS 為 end-user 提供了很大的益處，在設計 FTL 時它採用了以下 tradeoffs:</p>
-<p><strong>Zone Sizing</strong></p>
-<p>&emsp;&emsp;zone’s write capacity 與 erase block size 的實作有直接的關係，因為 ZNS SSD 是以 zone 為單位 erase。zone size 設計的大，要花很久才能寫滿，也就不需要常常 erase，但也降低了 host 擺放資料的自由度(zone 中只能 sequential write，host 只能決定資料要寫去哪個 zone)。為了 data placement freedom，作者主張盡可能地縮小 zone 的尺寸，維持 die-level protection，也可以在 low I/O queue depths 實現足夠好的 read/write performance。</p>
-<p><strong>Mapping Table</strong></p>
-<p>&emsp;&emsp;block-interface SSD 的 FTL 維護細粒度(fine-grained)的 logical-to-physical mapping table，提升 garbage collection 的 performance，但也需要很大的 DRAM 來儲存 table，1TB 的儲存空間需要 1GB 的 table 來 mapping address。</p>
-<p>&emsp;&emsp;細粒度的 mapping table 可以讓 garbage collection 比較有效率地搬移 valid data，因為在搬移資料時要維持一塊資料內的 offset，不然 mapping 會壞掉。</p>
-<p>&emsp;&emsp;比如，mapping table 的 entry 單位為 4 bytes，我要搬的資料是 0xAF72，我就直接搬走這 4 bytes ，並更新 table 就好。但如果 table entry 單位為 16 bytes，我要搬的資料就會是 0x574DDBADAF725472，但有可能遇到只有 0xAF72 這 4 bytes 為 valid data 的情況，就會多搬到一些 invalid data(浪費時間~)。也不可以只搬 4 byte，因為這 4 bytes 的 mapping 是 map 到這組 16 bytes 的開頭，然後算 offset，只搬 4 bytes，mapping 會很難維護。</p>
-<p><strong>Device Resources</strong></p>
-<p>&emsp;&emsp;hardware 會分配一些資源給 partially-written erase block(ie active zone)，包含 XOR engine、memory resources、電容(萬一有意外斷電，可以保護資料)。因為資源有限，以及成本考量，ZNS SSD 預期的 active zone 數量為 8-32。也可以增加硬體資源，或降低 parity 需求(除錯用)，來增加更多 active zone 數量。</p>
-<div style="border:#DDDDDD 3px dashed; padding:3px">
-
-<p><strong>How does it eliminate the mismatch?</strong></p>
-<p><em>首先！！zone 不一定是一段連續的空間喔喔喔，在這篇的 case，zone 由數個 block 組成，device 端會有 mapping，會 map zone 的各個 block 在哪裡</em><br><em>eg.</em><br><em>logical zone</em><br><em>□□□□□□□□</em><br><em>physical blocks(黑色的是 logical zone 的 8 個 blocks)</em><br><em>□□□□■■■■</em><br><em>■■■■□□□□</em><br><em>□□□□□□□□</em><br><em>“The ZNS interface enables the SSD to translate sequential zone writes into distinct erase blocks”</em><br><em>指說 ZNS 會把 zone 看成一個一個的 block</em><br><em>“thus eliminating the interface- media mismatch”</em><br><em>mismatch 的 elimination 源自於 “random writes are disallowed by the interface”</em></p>
-<blockquote>
-<p>ZNS SSDs relinquish responsibilities traditionally carried out by the FTL, associated with supporting random writes. <strong>The ZNS interface enables the SSD to translate sequential zone writes into distinct erase blocks, thus eliminating the interface- media mismatch.</strong> Since random writes are disallowed by the interface and zones must be explicitly reset by the host, the data placement managed by the device occurs at the coarse- grained level of zones.</p>
-</blockquote>
-</div>
-</br>
-<div style="border:#DDDDDD 3px dashed; padding:3px">
-
-<p><strong>Why does the moving of GC from the device to host result in the elimination of WA</strong></p>
-<p><em>WA = device 寫的 / host 寫的</em><br><em>被搬移的 valid data 從 SSD 自己多寫的，變成 host 發起的 write request</em></p>
-<p><strong>How dose over-provisioning work？</strong></p>
-<p><em>假設 OP 7%，SSD 告訴 host 有 100 的空間，事實上 SSD 有 107 的空間。</em><br><em>因為 host 以為的容量比較低，它就不會寫那麼多資料，SSD 就可以有更多空間處理 garbage collection。</em><br><em>至於 SSD 如何維護 OP，就要看 FTL 的設計。</em></p>
-<blockquote>
-<p>This means that the SSD garbage collection routine responsible for moving valid data between erase blocks (to free up writeable capacity) becomes the responsibility of the host. This implies that write amplification on the device is eliminated, which eliminates the need for capacity over-provisioning, while also improving the overall performance and lifetime of the media [17, 23].</p>
-</blockquote>
-</div>
-</br>
-<div style="border:#DDDDDD 3px dashed; padding:3px">
-
-<p><strong>Why does the size of erase block affect the data placement?</strong></p>
-<p><em>ZNS SSD 是以 zone 為單位 erase。zone size 設計的大，要花很久才能寫滿，也就不需要常常 erase</em></p>
-<blockquote>
-<p>Zone Sizing. There is a direct correlation between a zone’s write capacity and the size of the erase block implemented by the SSD. </p>
-</blockquote>
-</div>
-</br>
-<div style="border:#DDDDDD 3px dashed; padding:3px">
-
-<p><strong>Why does the fully-associative mapping table improves garbage collection performance?</strong></p>
-<p><em>table 很詳細，假設以 page 為單位來存 address mapping，page 的搬移可以隨便搬，mapping table 很好維護。如果用粗粒度來存 mapping table，比如以 block 為單位來 mapping，block 內的 data 靠 offset 來 mapping，要搬就要搬整塊 block，比較沒效率。</em></p>
-<blockquote>
-<p>In block-interface SSDs, the FTL maintains a fully-associative mapping table [21] between LBAs and their physical locations. This fine-grained mapping improves garbage collection performance, but the table size often requires 1GB of mappings per 1TB of media capacity. </p>
-</blockquote>
-</div>
-**-Device Resource-**
-
-<h3 id="3-2-emsp-Host-Software-Adoption"><a href="#3-2-emsp-Host-Software-Adoption" class="headerlink" title="3.2 &emsp; Host Software Adoption"></a>3.2 &emsp; Host Software Adoption</h3><p>&emsp;&emsp;三種將 host software 接上 ZNS interface 的方法：</p>
-<ol>
-<li>Host-side FTL (HFTL)</li>
-<li>File Systems</li>
-<li>End-to-End Data Placement</li>
-</ol>
-<p>&emsp;&emsp;大多產生順序寫的應用比較適合 ZNS，比如 LSM-tree；容易有 in-place update 的應用就比較不適合，會有很多問題要克服。</p>
-<p><strong>Host-side FTL (HFTL)</strong></p>
-<p>&emsp;&emsp;HFTL 可作為 ZNS SSD 與產生 random write、in-place update 的應用之間的溝通橋樑。跟 SSD 的 FTL 有點像，但它只管理 mapping 以及 garbage collection。</p>
-<p>&emsp;&emsp;HFTL 可以更好地統整 host 端的資訊，再去控制 data placement 以及 garbage collection，得到更好的 performance。同時，提供應用 block interface。</p>
-<p>&emsp;&emsp;現有的 HFTL:</p>
-<ul>
-<li>dm-zap (supports ZNS SSD)</li>
-<li>pblk</li>
-<li>SPDK’s FTL</li>
-</ul>
-<p><strong>File Systems</strong></p>
-<p>&emsp;&emsp;將 zones 與 file system 整合，來確保 workload 都是 sequential，藉此消除 FTL 與 HFTL 在 data placement 的overhead。</p>
-<p>&emsp;&emsp;大部分的 file system 都是執行 in-place write，不太適合 ZNS。以下幾個 file system 大部分的寫入都是 sequential， 也有支援 zone:</p>
-<ul>
-<li>f2fs</li>
-<li>btrfs</li>
-<li>zfs</li>
-</ul>
-<p>&emsp;&emsp;不過，metadata 跟 superblock 就不是 sequential write 了，可以利用 log-structured writes 或 floating superblock來處理。</p>
-<p>&emsp;&emsp;file system 有效地模仿 HFTL 的邏輯，有 mapping table，也處理 garbage collection。</p>
-<p>&emsp;&emsp;現存支援 zone 的 file system 只有支援 ZAC/ZBC 定義的 zone，所以這篇 paper 的研究團隊還修改了 f2fs，使其支援 ZNS 定義的 zone，並評估效能表現。</p>
-<p><strong>End-to-End Data Placement</strong></p>
-<p>&emsp;&emsp;理想情況下，application 的 data structure 若能對齊 zone- write semantics 是最好的。若能讓 application 直接處理 data placement 可以得到最大的自由度，也可以消除 file system 以及 translation layer 帶來的 overhead。透過 ZNS SSD 與 application 的直接合作，有解決寫放大以及降低 latency 潛力，但要做 application 跟 raw block device 的整合是非常可怕的工作。</p>
-<p>&emsp;&emsp;file semantics 是很有用的 abstraction，它讓應用支援 zone、幫助使用者做執行檢查、做 error checking，還有處理備份與復原。</p>
-<p>&emsp;&emsp;end-to-end data placement 也比較適合通常執行 sequential write 的應用，例如屬於 LSM-tree-based stores 的 RocksDB，作者設計了 ZenFS(a new RockDB zoned storage backend)，來嘗試 end-to-end data placement。</p>
-<div style="border:#DDDDDD 3px dashed; padding:3px">
-
-<p><strong>What is the storage backend？</strong></p>
-<p><em>ZenFS 是在處理 data placement</em></p>
-<blockquote>
-<p>To showcase the benefits of end-to-end integration, we introduce <strong>ZenFS, a new RocksDB zoned storage backend</strong> and compare it to both (1) the XFS file system and (2) the f2fs file system, with and without integrated ZNS support.</p>
-</blockquote>
-<blockquote>
-<p>Fourth, we developed ZenFS [25], <strong>a novel storage backend for RocksDB that allows control of data placement through zones</strong>, to evaluate the benefits of end-to-end integration for zoned storage. </p>
-</blockquote>
-</div>
-
-<h2 id="4-emsp-Implement"><a href="#4-emsp-Implement" class="headerlink" title="4 &emsp; Implement"></a>4 &emsp; Implement</h2><p>&emsp;&emsp;作者修改了四個軟體專案，使其支援 ZNS：</p>
-<ol>
-<li>Linux kernel</li>
-<li>f2fs</li>
-<li>fio benchmark</li>
-<li>ZenFS (storage backend of RocksDB)</li>
-</ol>
-<p><strong>§4.1</strong> 描述為了在已支援 ZAC/ZBC 的架構上支援 ZNS，需要做的改變<br><strong>§4.2</strong> ZenFS 的架構細節</p>
-<h3 id="4-1-emsp-General-Linux-Support"><a href="#4-1-emsp-General-Linux-Support" class="headerlink" title="4.1 &emsp; General Linux Support"></a>4.1 &emsp; General Linux Support</h3><p>&emsp;&emsp;Linux kernel 的 Zoned Block Device (ZBD) subsystem 提供可以使用在各種 zoned storage 上的統一 zone storage API 的 abstraction layer，其提供支援 device enumeration、report of zones、zone management 的 in- kernel API 及 ioctl-based user-space API。如 fio 等應用可以利用 user-space API 發起對齊 device 的寫入特性的 IO request，繞過底層的 interface。</p>
-<p>&emsp;&emsp;作者為了讓 Linux kernel 及 ZBD subsystem 支援 ZNS，修改了 NVMe device driver，也修改 ZBD subsystem API，使其公開 per zone capacity attribute 及 active zones limit。</p>
-<p><strong>Zone Capacity</strong></p>
-<p>&emsp;&emsp;host manage 一組 zone descriptor data structure，用來儲存 zone capacity attribute 及版本。</p>
-<p>&emsp;&emsp;fio 及 f2fs 都被更新以支援 zone descriptor data structure，fio 只需要避免 issue 超過 zone 容量的 write request，而 f2fs 需要更多的修改。</p>
-<p>&emsp;&emsp;原本的 f2fs 以 segment 為單位來管理空間，若需要使用在 zoned block device，則將數個 segment 組成一個 section，section 的大小對齊 zone。f2fs 會順序地寫入 section 中的segment，且不支援 partially writable zone。為了讓 f2fs、kernel implementation、f2fs-tools 支援 zone capacity attribute，新增了兩個額外的 segment types(原有 empty、open、full)：</p>
-<ul>
-<li>unsuable<br>  用於 zone unwritable 的部分</li>
-<li>partial<br>  用於橫跨 writable part 與 unwritable part 的 segment</li>
-</ul>
-<p>&emsp;&emsp;藉此，就可以在 segment 與 zone capacity 沒對齊的情況下，使用完整的 capacity。</p>
-<p>&emsp;&emsp;為了向後支援沒有公開 zone cpacity 的 SMR HDDs，zone capacity 會初始化為 zone size。</p>
-<p><strong>Limiting Active Zone</strong></p>
-<p>&emsp;&emsp;由於 flash 的物理特性(program disturb)，可以同時存在 active zone 有數量限制。當 device enumeration 時，kernel 及 user space 會得到限制的數量。</p>
-<p>&emsp;&emsp;fio 並沒有針對 active limitation 做出修改，fio user 必須自己注意 active-limit-constraint。</p>
-<p>&emsp;&emsp;f2fs 限制其同時可 open 的 segment，數量為 6，也可減少至與 active zone number 相同。如果可以同時存在的 active zone 數量小於 6，f2fs 就下修同時可 open 的 segment 數量到 active zone 的數量。</p>
-<p>&emsp;&emsp;f2fs 需要將 metadata 儲存在 conventional block device（貌似是因為需要 random write），因為本篇實驗用的 ZNS SSD 有提供一小塊空間作為 block device，作者就沒有處理這個問題了。不過，也可以利用 translation layer 來解決。</p>
-<h3 id="4-2-emsp-RocksDB-Zone-Support"><a href="#4-2-emsp-RocksDB-Zone-Support" class="headerlink" title="4.2 &emsp; RocksDB Zone Support"></a>4.2 &emsp; RocksDB Zone Support</h3><p>&emsp;&emsp;這章會介紹作者如何利用 ZenFS (storage backend) 在 RocksDB 上實現 end-to-end data placement。如果用 file system 管理 RocksDB 內的資料，就不用額外處理 file extents、 buffering，以及 free space management，但也失去了直接將資料放進 zone 的能力，降低 performance。</p>
-<h4 id="4-2-1-emsp-ZenFS"><a href="#4-2-1-emsp-ZenFS" class="headerlink" title="4.2.1 &emsp; ZenFS"></a>4.2.1 &emsp; ZenFS</h4><p>&emsp;&emsp;ZenFS backend storage 實作極小的 on-disk file system，將其與 RocksDB 的 file wrapper API 整合。ZenFS 會小心地依照 zone 的 access constraint 將資料擺進 zone，並與 device-side zone metadata (eg write pointer) 配合寫入。</p>
-<p>&emsp;&emsp;ZenFS 的主要組成如下：</p>
-<blockquote>
-<p><img src="https://i.imgur.com/lPkhuF1.png" alt=""></p>
-</blockquote>
-<p><strong>Journalling and Data</strong></p>
-<p>&emsp;&emsp;ZenFS 定義了兩個 zone type: journal zone、data zone。</p>
-<p>&emsp;&emsp;journal zone 會被用來 recover file system、維護 superblock，以及 WAL 跟寫入 zone 的資料的 mapping；data zone 則負責儲存 file content。</p>
-<p><strong>Extents</strong></p>
-<p>&emsp;&emsp;RocksDB 的資料會 map 並寫到「extent」，extent 是一塊 varible-sized、block-aligned 的連續區塊，會被循序寫入 data zone，其內部存有與特定 identifier 相關的資料。</p>
-<p>&emsp;&emsp;一個 zone 中可以含有多個 extent，但一個 extent 不能橫跨數個 zone。extent 的 allocation 及 deallocation 的事件會被紀錄在一 in-memory data structure，當 file close 或 RocksDB 下同步指令(fsync)時，這些紀錄會被寫進 journal。</p>
-<p>&emsp;&emsp;這個 in-memory data structure 會持續追蹤 extents-to-zones 的 mapping，如果 zone 中的所有 file 都被刪除，zone 就可以被 reset 並重新使用。</p>
-<p><strong>Superblock</strong></p>
-<p>&emsp;&emsp;從 disk 初始化或復原 ZenFS 的入口點。superblock 存有可以表示 current instance、magic value、user options 的 identifier。在 superblock 中還存著具有唯一性的 identifier: UUID，使得就算 device enumeration 改變，user 也可以認得同一個 file system。</p>
-<p><strong>Journal</strong></p>
-<p>&emsp;&emsp;journal 會負責:</p>
-<ol>
-<li>維護 superblock</li>
-<li>WAL to zone、data file to zone 的 mapping</li>
-</ol>
-<p>&emsp;&emsp;journal state 會存在 journal 專用的 zone(journal zone)，journal zone 會是 device 的頭兩個  non-offline zones，其中一個會是 active journal zone，負責 update journal state。就是兩個 journal 輪流使用，表示可以追溯到最遠的資料也就只能是兩個 zone 的空間裡最舊的那筆紀錄。journal zone 的開頭會存「header」，header 裡會有 sequence number(每次有新的 journal zone 被初始化就會加一)、superblock data structure、snapshot of the current journal state，寫好 header 後，zone 剩下的 writable capacity 就會用來放 update journal 的紀錄。</p>
-<p>&emsp;&emsp;要從 disk 復原 journal state 的步驟為:</p>
-<ol>
-<li>先從兩個 journal zone 的第一個 LBA 讀出他們各自的 sequence number，序號較大的那個會是 current active zone</li>
-<li>讀出 active zone 的完整 header，初始化 initial superblock 跟 journal state</li>
-<li>從 journal snapshot 的狀態開始，去執行 journal 裡紀錄的 update 來還原 journal state</li>
-</ol>
-<p>&emsp;&emsp;要執行多少 journal update 取決於 zone 的 state，如果是 OPEN state，就只要 replay write pointer 前的紀錄；如果是 FULL state，就要把 zone 裡的紀錄全部都 replay。會拿來還原的是 current active zone，是正在拿來紀錄的 journal zone，如果 zone 是 FULL state，已經被寫滿了，還原好後就要初始化另一個 journal zone，來繼續紀錄更新。</p>
-<p>&emsp;&emsp;initial journal state 會由一個外部工具將  initial sequence number、superblock data structure、an empty snapshot of the journal 寫入第一個 journal zone。RocksDB 會去初始化 ZenFS，上面提到的復原 journal 的程序就會被執行，ZenFS 就會有初始的 journal state，就可以 access RocksDB 內的資料了。</p>
-<p><strong>Writable Capacity in Data Zones</strong></p>
-<p>&emsp;&emsp;想要有理想的 allocation，使得儲存空間被完全使用，需要 file size 為 zone 的 writable capacity 的倍數，使得 file data 可以分散到數個 zones，然後完全填滿所有 writable capacity。RocksDB 可以設定 file size，但這個設定只會是設定，實際上 file 會多大取決於 compaction 的結果，因此要讓 file 有一個明確的大小是不可行的。</p>
-<p>&emsp;&emsp;【不確定】ZenFS 做的是給一個範圍，限制 file data 寫完後，zone 剩下的空間比例。如果 file size 不符合限制，ZenFS 就會用它的 zone allocation algorithm 來確保 available capacity 盡量被使用到。</p>
-<p><strong>Data Zone Selection</strong></p>
-<p>&emsp;&emsp;ZenFS 採用 best-effort algorithm 來選擇要拿來寫資料的 zone，在寫入 WAL 或 SST 前，會幫 file 設定 lifetime hint，藉此區分兩種 file。ZenFS 會去找 zone 中最大 lifetime 大於當前要寫的 file 的 lifetime 的 zone，來寫入 file，避免延長 zone 的存在時間。如果有很多符合的結果，就寫到 lifetime 最相近的 zone。如果沒有符合的 zone，就 allocate 一個 empty zone 來寫入。如果找到的 zone 不夠寫完 file，就用相同的方法再找一個 zone 來寫。</p>
-<p><strong>Active Zone Limits</strong></p>
-<p>&emsp;&emsp;ZenFS 至少需要有 3 個 active zone，來儲存 journal、WAL、compaction 的資料。實驗顯示，透過限制同時間 compaction 的數量，RocksDB 可以最少使用 6 個有寫入性能限制的 zone。而將 active zone 數量提升到 12 以上，就不會有什麼性能的提升了。</p>
-<p><strong>Direct I/O and Buffered Writes</strong></p>
-<p>&emsp;&emsp;因為 SST 的寫入是 sequential 且不可更改的，所以 ZenFS 會繞過 kernel page cache，直接把 SST 寫入 SSD。其他 file (例如 WAL)，會先放在 in-memory buffer，等 buffer 滿了、file closed 或是 RocksDB 發起 flush request，才會 flush 進 SSD。</p>
-<p>&emsp;&emsp;如果要 flush，ZenFS 會把加 padding 在資料後面，讓寫入的大小可以對齊 block，紀錄有效資料長度的 extent 會被寫入 journal。padding 會造成一點寫放大，但 conventional file system 也有這個問題。</p>
-<div style="border:#DDDDDD 3px dashed; padding:3px">
-
-<p><strong>What is the offline zone?</strong></p>
-<p><em>不能寫的 zone xD？</em></p>
-<blockquote>
-<p>There is one caveat, and that is that if the zone is in this offline state, which means that it’s basically offline, you’re not addressable and you can neither write to it nor read to it, then that would result in an error.<br>—— <a href="https://www.techtarget.com/searchstorage/post/How-Zoned-Namespaces-Improve-SSD-Lifetime-Throughput-and-Latency" target="_blank" rel="noopener">How Zoned Namespaces Improve SSD Lifetime, Throughput and Latency</a></p>
-</blockquote>
-</div>
-
-<h2 id="Evaluation"><a href="#Evaluation" class="headerlink" title="Evaluation"></a>Evaluation</h2><p>no time.</p>
-<p>good. good. good.</p>
-<h2 id="Ohter-Questions"><a href="#Ohter-Questions" class="headerlink" title="Ohter Questions"></a>Ohter Questions</h2><div style="border:#DDDDDD 3px dashed; padding:3px">
-
-<p><strong>What is two-step programming</strong></p>
-<blockquote>
-<p>To reduce the impact of cell-to-cell program interference, two-step programming has been adopted for sub-40 nm flash memories [5,37]. Two-step programming writes the values of the two pages within a wordline in two independent stages. Figure 2 shows how the cell state and cell threshold voltage level change during two-step programming. After an erase operation on a block, all flash cells are at the erased (ER) state. In the first step of two-step programming, only the LSB page is programmed. If the LSB of a cell should be 0, the flash cell is programmed into a temporary program state (TP); otherwise, it remains in the ER state. In the second step, the MSB page is programmed. For an MSB of 1, the cell either remains in the ER state (if its LSB is 1), or moves up from the TP state to the P3 state (if its LSB is 0). For an MSB of 0, the cell either moves up from the ER state to the P1 state (if its LSB is 1), or moves up from the TP state to the P2 state (if its LSB is 0).<br><img src="https://i.imgur.com/MBPwcT9.png" alt=""><br>—— Vulnerabilities in MLC NAND Flash Memory Programming: Experimental Analysis, Exploits, and Mitigation Techniques (IEEE 2017)</p>
-</blockquote>
-</div>
-    </br>
-<div style="border:#DDDDDD 3px dashed; padding:3px">
-
-<p><strong>What is device enumeration</strong></p>
-<blockquote>
-<p>Whenever a USB device is attached to the bus it will be enumerated by the USB subsystem - i.e an unique device number (1-127) is assigned and then the device descriptor is read. The desciptor is a data structure which contains information about the device and its properties. The USB standard defines a hierarchy of descriptors<br>—— <a href="http://www.linux-usb.org/USB-guide/x75.html" target="_blank" rel="noopener">http://www.linux-usb.org/USB-guide/x75.html</a></p>
-</blockquote>
-<p><em>host 列出連接的 device 有哪些</em></p>
-<blockquote>
-<p>Limiting Active Zones. Due to the nature of flash-based SSDs, there is a strict limit on the number of zones that can be active simultaneously, i.e., either in OPEN or CLOSED state. The limit is detected upon zoned block device enumeration, and exposed through the kernel and user-space APIs. SMR HDDs do not have such a limit and the attribute is initialized to zero (read: infinity).</p>
-</blockquote>
-</div>
-    </br>
-<div style="border:#DDDDDD 3px dashed; padding:3px">
-
-<p><strong>What is end-to-end data placement</strong></p>
-<blockquote>
-<p><a href="https://www.snia.org/educational-library/end-end-data-placement-zoned-block-devices-2020" target="_blank" rel="noopener">https://www.snia.org/educational-library/end-end-data-placement-zoned-block-devices-2020</a></p>
-</blockquote>
-</div>
+          <p>psper: <a href="https://www.usenix.org/conference/atc21/presentation/bjorling" target="_blank" rel="noopener">ZNS: Avoiding the Block Interface Tax for Flash-based SSDs</a></p>
+<p>待整理實驗部分文章及圖片</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/10/24/Bye-Block-Interface-Tax/#more" rel="contents">
+                閱讀全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -610,10 +330,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">發表於</span>
-              
 
-              <time title="創建時間：2022-10-10 13:30:09 / 修改時間：14:05:45" itemprop="dateCreated datePublished" datetime="2022-10-10T13:30:09+08:00">2022-10-10</time>
+              <time title="創建時間：2022-10-10 13:30:09" itemprop="dateCreated datePublished" datetime="2022-10-10T13:30:09+08:00">2022-10-10</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2022-10-24 14:44:23" itemprop="dateModified" datetime="2022-10-24T14:44:23+08:00">2022-10-24</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -1276,7 +1002,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-count">16</span>
         <span class="site-state-item-name">標籤</span></a>
       </div>
   </nav>
