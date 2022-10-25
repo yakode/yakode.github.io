@@ -20,17 +20,22 @@
     var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="psper: ZNS: Avoiding the Block Interface Tax for Flash-based SSDs 待整理實驗部分文章及圖片">
+  <meta name="description" content="psper: ZNS: Avoiding the Block Interface Tax for Flash-based SSDs 待整理-圖片、ZAC&#x2F;ABC&#x2F;ZNS 比較">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Bye Block Interface Tax">
 <meta property="og:url" content="http://yoursite.com/2022/10/24/Bye-Block-Interface-Tax/index.html">
 <meta property="og:site_name" content="思考恐懼症">
-<meta property="og:description" content="psper: ZNS: Avoiding the Block Interface Tax for Flash-based SSDs 待整理實驗部分文章及圖片">
+<meta property="og:description" content="psper: ZNS: Avoiding the Block Interface Tax for Flash-based SSDs 待整理-圖片、ZAC&#x2F;ABC&#x2F;ZNS 比較">
 <meta property="og:locale" content="zh_TW">
 <meta property="og:image" content="https://i.imgur.com/lPkhuF1.png">
+<meta property="og:image" content="https://i.imgur.com/VWsptst.png">
+<meta property="og:image" content="https://i.imgur.com/cKfFpUI.png">
+<meta property="og:image" content="https://i.imgur.com/hCRxmQ9.png">
+<meta property="og:image" content="https://i.imgur.com/UHNWBqG.png">
+<meta property="og:image" content="https://i.imgur.com/rYGytnQ.png">
 <meta property="og:image" content="https://i.imgur.com/MBPwcT9.png">
 <meta property="article:published_time" content="2022-10-24T06:42:26.000Z">
-<meta property="article:modified_time" content="2022-10-24T06:44:01.965Z">
+<meta property="article:modified_time" content="2022-10-25T03:46:51.641Z">
 <meta property="article:author" content="Yak">
 <meta property="article:tag" content="ZNS SSD">
 <meta property="article:tag" content="LSM-tree">
@@ -194,10 +199,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">發表於</span>
-              
 
-              <time title="創建時間：2022-10-24 14:42:26 / 修改時間：14:44:01" itemprop="dateCreated datePublished" datetime="2022-10-24T14:42:26+08:00">2022-10-24</time>
+              <time title="創建時間：2022-10-24 14:42:26" itemprop="dateCreated datePublished" datetime="2022-10-24T14:42:26+08:00">2022-10-24</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2022-10-25 11:46:51" itemprop="dateModified" datetime="2022-10-25T11:46:51+08:00">2022-10-25</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -220,7 +231,7 @@
 
       
         <p>psper: <a href="https://www.usenix.org/conference/atc21/presentation/bjorling" target="_blank" rel="noopener">ZNS: Avoiding the Block Interface Tax for Flash-based SSDs</a></p>
-<p>待整理實驗部分文章及圖片</p>
+<p>待整理-圖片、ZAC/ABC/ZNS 比較</p>
 <a id="more"></a>
 
 <p>◪ 說是筆記，其實只是在嘗試翻譯，以及提出問題並回答罷了◩<br>◩ 如果不認識 ZNS SSD，可以先讀<a href="https://ieeexplore.ieee.org/document/9188086" target="_blank" rel="noopener">這篇 paper</a>，取得一些 background knowledge 後再閱讀這篇筆記 ◪<br>◩ 沒有標註來源的引言皆出自 <a href="https://www.usenix.org/conference/atc21/presentation/bjorling" target="_blank" rel="noopener">paper</a> ◪</p>
@@ -484,9 +495,77 @@
 </blockquote>
 </div>
 
-<h2 id="Evaluation"><a href="#Evaluation" class="headerlink" title="Evaluation"></a>Evaluation</h2><p>no time.</p>
-<p>good. good. good.</p>
-<h2 id="Ohter-Questions"><a href="#Ohter-Questions" class="headerlink" title="Ohter Questions"></a>Ohter Questions</h2><div style="border:#DDDDDD 3px dashed; padding:3px">
+<h2 id="Evaluation"><a href="#Evaluation" class="headerlink" title="Evaluation"></a>Evaluation</h2><p>&emsp;&emsp;作者使用一款 production SSD hardware platform 來執行實驗，可以選擇要當作 block-interface SSD 或是 ZNS SSD 使用。因此，透過幾乎相同的硬體，可以更好地比較 block-interface SSD 以及 ZNS SSD。</p>
+<p><strong>§5.1</strong> Raw device IO performance: 直接比較 block-interface SSD 以及 ZNS SSD<br><strong>§5.2</strong> End-to-end application performance: 執行 f2fs、XFS 的 RocksDB 在 block-interface SSD 的效能、執行 ZenFS 的 RocksDB 在 ZNS SSD 的效能，比較這三者的效能<br><strong>§5.3</strong> End-to-end performance comparison with SSD Streams: 將執行 f2fs、XFS file system 的 RocksDB 分別執行在 streams-enabled block-interface SSD 以及 ZNS SSD 上，並比較兩者的效能</p>
+<p>&emsp;&emsp;實驗配置:</p>
+<table>
+<thead>
+<tr>
+<th align="left">item</th>
+<th align="left">value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">system</td>
+<td align="left">Dell R7515</td>
+</tr>
+<tr>
+<td align="left">CPU</td>
+<td align="left">16-core AMD Epyc 7302P CPU</td>
+</tr>
+<tr>
+<td align="left">DRAM</td>
+<td align="left">128 GB (8×16GB DDR4-3200Mhz)</td>
+</tr>
+</tbody></table>
+<h3 id="5-1-emsp-Raw-I-O-Characteristics"><a href="#5-1-emsp-Raw-I-O-Characteristics" class="headerlink" title="5.1 &emsp; Raw I/O Characteristics"></a>5.1 &emsp; Raw I/O Characteristics</h3><p>&emsp;&emsp;實驗中，為求 block-interface SSD 跟 ZNS SSD 有相同的 workload，block-interface SSD 的 LBAs 會被切成跟 zone 一樣的區段，這些區段裡也有 sequential write constraint。</p>
+<p><strong>Sustained Write Throughput</strong></p>
+<p>&emsp;&emsp;測量 SSD 的 throughput 來觀察 garbage collection 對於 throughput 的影響，以及其影響 host write 的程度。實驗是將 64KB 的資料寫入四個 zones，當一個 zone 滿後，另一個 zone 被選來 reset，並繼續寫入資料。實驗的過程中，測量 host write throughput 是否能達到特定的目標值，目標值為 0-1GB。從 figure 5(a) 可以發現 ZNS SSD 可以持續達到目標的 throughput，而 7% OP 及 28% OP 的 block-interface SSD 的 throughput 分別停在大約 300 MB/s 及 500 MB/s。</p>
+<p>&emsp;&emsp;因為 ZNS SSD 可以將寫入對齊到不同的 erase blocks，並避免 garbage collection，藉此得到更高的 performance 以及較低的 write amplification。而 block-interface SSD 將 lifetime 不同的資料都混合放進同一個 erase block，造成 garbage collection overhead 的上升。</p>
+<p><strong>Random Reads and Writes</strong></p>
+<p>&emsp;&emsp;為了觀察 ZNS SSD 減少的 read latency，在上一個的實驗的基礎上，加上了 4KB 的 read requests，並紀錄在不同 write target 下的 read latency。figure 5(b) 顯示 ZNS SSD 的 read latency 以線性成長，而 block-interface SSD 的 latency 則以更快的速度提高。</p>
+<p><img src="https://i.imgur.com/VWsptst.png" alt=""></p>
+<div style="border:#DDDDDD 3px dashed; padding:3px">
+
+<p><strong>Why do the block-interface SSDs also have the sequential write constraint?</strong></p>
+<p><em>將差異限縮在 interface、OP size、garbage collection(dev or host)</em></p>
+<blockquote>
+<p>To ensure that the same workload is applied to both the block- interface SSD and ZNS SSDs, we divide the block-interface SSD address space into LBA ranges that have the same number of LBAs as the zone capacity exposed by the ZNS SSD. These zones, or LBA ranges, respect the same sequential write constraint as ZNS, but the zone reset is simulated by trimming the LBA range before writing. We measure performance after the SSD has reached its steady-state with a given workload.</p>
+</blockquote>
+</div>
+
+<h3 id="5-2-emsp-RocksDB"><a href="#5-2-emsp-RocksDB" class="headerlink" title="5.2 &emsp; RocksDB"></a>5.2 &emsp; RocksDB</h3><p>&emsp;&emsp;4 setups:</p>
+<ul>
+<li>f2fs + block-interface SSD</li>
+<li>XFS + block-interface SSD</li>
+<li>f2fs + ZNS SSD</li>
+<li>ZenFS + ZNS SSD</li>
+</ul>
+<p>&emsp;&emsp;running on 5 workloads:</p>
+<ul>
+<li><em>fillrandom</em>: write-intensive</li>
+<li><em>overwrite</em>: 就 overwriting (ﾟ∀。) </li>
+<li><em>readwhilewriting</em>(random read): random read while writing</li>
+<li><em>random reads</em>: … </li>
+<li><em>readwhilewriting</em>(limitied write rate): random read while writing with limited write rate</li>
+</ul>
+<p>&emsp;&emsp;實驗只使用 80% 的 capacity，因此 7% OP 及 28% OP 實際上分別於 27% 以及 48%。</p>
+<p><strong>Write Throughput</strong></p>
+<p>&emsp;&emsp;使用 write-heavy benchmark 來比較 28% OP SSD 跟 ZNS SSD 的 write throughput，先用 <em>fillrandom</em> 寫入 380萬筆 (20B key, 400B value)，再用 <em>overwhrite</em> 隨機地 overwrite 所有 vlaue。</p>
+<p>&emsp;&emsp;<em>fillradom</em> 是從 clean state (empty?) 開始寫入，因此 garbage collection overhaed 影響不大，在 <em>overwrite</em> 才能看出 garbage colection overhead 的影響。</p>
+<p>&emsp;&emsp;兩種 benchmarks 的結果都顯示使用 ZNS SSD 可以得到較好的結果，尤其是 <em>overwrite</em> 的結果更顯示 garbage colleciton overhaed 會嚴重影響整體效能。</p>
+<p><img src="https://i.imgur.com/cKfFpUI.png" alt=""></p>
+<p><strong>Read While Writing</strong></p>
+<p>&emsp;&emsp;ZNS SSD 因為沒有 device garbage collection，得到較低的 read latency，這個實驗想看 no device garbage collection 如何影響 RocksDB 的 read throughput。 </p>
+<p><em>randomread</em> → <em>readwhilewriting</em>(limited write rate) → <em>readwhilewriting</em>(no limit)</p>
+<p>&emsp;&emsp;<em>randomread</em> 沒有 write request 來干擾，大家的表現都差不多。</p>
+<p><img src="https://i.imgur.com/hCRxmQ9.png" alt=""></p>
+<p><strong>Impact of Capacity Over-Provisioning</strong></p>
+<p>&emsp;&emsp;查看 over-provisioning 對於效能的影響，有 OP 的 SSD 因為留了大量空間處理 garbage collection，減少了寫放大。原本空間吃緊時，就要 garbage collection，複製 valid data，造成寫放大。有了 OP(更多空間) 就可以有更多時間等 block 內的 data 變 invalid，藉此下降了寫放大。但是 ZNS SSD 沒有 OP，仍然沒有嚴重的寫放大問題。</p>
+<p><img src="https://i.imgur.com/UHNWBqG.png" alt=""></p>
+<h3 id="5-3-emsp-5-3-Streams"><a href="#5-3-emsp-5-3-Streams" class="headerlink" title="5.3 &emsp; 5.3 Streams"></a>5.3 &emsp; 5.3 Streams</h3><p>&emsp;&emsp;最後，比較 block-interface SSD with streams 跟 ZNS SSD。結果就是block-interface SSD without streams &lt; block-interface SSD with streams &lt; ZNS SSD</p>
+<p><img src="https://i.imgur.com/rYGytnQ.png" alt=""></p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><div style="border:#DDDDDD 3px dashed; padding:3px">
 
 <p><strong>What is two-step programming</strong></p>
 <blockquote>
@@ -510,7 +589,7 @@
 
 <p><strong>What is end-to-end data placement</strong></p>
 <blockquote>
-<p><a href="https://www.snia.org/educational-library/end-end-data-placement-zoned-block-devices-2020" target="_blank" rel="noopener">https://www.snia.org/educational-library/end-end-data-placement-zoned-block-devices-2020</a></p>
+<p><a href="https://www.snia.org/educational-library/end-end-data-placement-zoned-block-devices-2020" target="_blank" rel="noopener">End To End Data Placement For Zoned Block Devices</a></p>
 </blockquote>
 </div>
     </div>
@@ -600,7 +679,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-emsp-Introduction"><span class="nav-number">1.</span> <span class="nav-text">1 &amp;emsp; Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-emsp-The-Zoned-Storage-Model"><span class="nav-number">2.</span> <span class="nav-text">2 &amp;emsp; The Zoned Storage Model</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-emsp-The-Block-Interface-Tax"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 &amp;emsp; The Block Interface Tax</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-emsp-Existing-Tax-Reduction-Strategics"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 &amp;emsp; Existing Tax-Reduction Strategics</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-emsp-Tax-free-Storage-with-Zones"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 &amp;emsp; Tax-free Storage with Zones</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-emsp-Evolving-toward-ZNS"><span class="nav-number">3.</span> <span class="nav-text">3 &amp;emsp; Evolving toward ZNS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-emsp-Hardware-Impact"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 &amp;emsp; Hardware Impact</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-emsp-Host-Software-Adoption"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 &amp;emsp; Host Software Adoption</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-emsp-Implement"><span class="nav-number">4.</span> <span class="nav-text">4 &amp;emsp; Implement</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-emsp-General-Linux-Support"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 &amp;emsp; General Linux Support</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-emsp-RocksDB-Zone-Support"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 &amp;emsp; RocksDB Zone Support</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-2-1-emsp-ZenFS"><span class="nav-number">4.2.1.</span> <span class="nav-text">4.2.1 &amp;emsp; ZenFS</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Evaluation"><span class="nav-number">5.</span> <span class="nav-text">Evaluation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ohter-Questions"><span class="nav-number">6.</span> <span class="nav-text">Ohter Questions</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-emsp-Introduction"><span class="nav-number">1.</span> <span class="nav-text">1 &amp;emsp; Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-emsp-The-Zoned-Storage-Model"><span class="nav-number">2.</span> <span class="nav-text">2 &amp;emsp; The Zoned Storage Model</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-emsp-The-Block-Interface-Tax"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 &amp;emsp; The Block Interface Tax</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-emsp-Existing-Tax-Reduction-Strategics"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 &amp;emsp; Existing Tax-Reduction Strategics</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-emsp-Tax-free-Storage-with-Zones"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 &amp;emsp; Tax-free Storage with Zones</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-emsp-Evolving-toward-ZNS"><span class="nav-number">3.</span> <span class="nav-text">3 &amp;emsp; Evolving toward ZNS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-emsp-Hardware-Impact"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 &amp;emsp; Hardware Impact</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-emsp-Host-Software-Adoption"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 &amp;emsp; Host Software Adoption</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-emsp-Implement"><span class="nav-number">4.</span> <span class="nav-text">4 &amp;emsp; Implement</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-emsp-General-Linux-Support"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 &amp;emsp; General Linux Support</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-emsp-RocksDB-Zone-Support"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 &amp;emsp; RocksDB Zone Support</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-2-1-emsp-ZenFS"><span class="nav-number">4.2.1.</span> <span class="nav-text">4.2.1 &amp;emsp; ZenFS</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Evaluation"><span class="nav-number">5.</span> <span class="nav-text">Evaluation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-emsp-Raw-I-O-Characteristics"><span class="nav-number">5.1.</span> <span class="nav-text">5.1 &amp;emsp; Raw I&#x2F;O Characteristics</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-emsp-RocksDB"><span class="nav-number">5.2.</span> <span class="nav-text">5.2 &amp;emsp; RocksDB</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-emsp-5-3-Streams"><span class="nav-number">5.3.</span> <span class="nav-text">5.3 &amp;emsp; 5.3 Streams</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">6.</span> <span class="nav-text">Reference</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
