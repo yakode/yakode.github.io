@@ -35,7 +35,7 @@
 <meta property="og:image" content="http://yoursite.com/uploads/ByeBlockInterfaceTax/figure10.png">
 <meta property="og:image" content="https://i.imgur.com/MBPwcT9.png">
 <meta property="article:published_time" content="2022-10-14T02:55:26.000Z">
-<meta property="article:modified_time" content="2022-10-27T10:05:40.649Z">
+<meta property="article:modified_time" content="2022-10-27T10:07:59.023Z">
 <meta property="article:author" content="Yak">
 <meta property="article:tag" content="ZNS SSD">
 <meta property="article:tag" content="LSM-tree">
@@ -207,7 +207,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2022-10-27 18:05:40" itemprop="dateModified" datetime="2022-10-27T18:05:40+08:00">2022-10-27</time>
+                <time title="修改時間：2022-10-27 18:07:59" itemprop="dateModified" datetime="2022-10-27T18:07:59+08:00">2022-10-27</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -233,7 +233,7 @@
         <p>psper: <a href="https://www.usenix.org/conference/atc21/presentation/bjorling" target="_blank" rel="noopener">ZNS: Avoiding the Block Interface Tax for Flash-based SSDs</a></p>
 <a id="more"></a>
 
-<p>◪ 說是筆記，其實只是在嘗試翻譯，以及提出問題並回答罷了◩<br>◩ 如果不認識 ZNS SSD，可以先讀<a href="https://ieeexplore.ieee.org/document/9188086" target="_blank" rel="noopener">這篇 paper</a>，取得一些 background knowledge 後再閱讀這篇筆記 ◪<br>◩ 沒有標註來源的引言皆出自 <a href="https://www.usenix.org/conference/atc21/presentation/bjorling" target="_blank" rel="noopener">paper</a> ◪</p>
+<p>◪ 說是筆記，其實只是在嘗試翻譯，以及提出問題並回答罷了◩<br>◩ 如果不認識 ZNS SSD，可以先讀<a href="https://blog.westerndigital.com/what-is-zoned-storage-initiative/" target="_blank" rel="noopener">這篇文章</a>或<a href="https://ieeexplore.ieee.org/document/9188086" target="_blank" rel="noopener">這篇 paper</a>，取得一些 background knowledge 後再閱讀這篇筆記 ◪<br>◩ 沒有標註來源的引言皆出自 <a href="https://www.usenix.org/conference/atc21/presentation/bjorling" target="_blank" rel="noopener">paper</a> ◪</p>
 <div style="border:#DDDDDD 3px dashed; padding:3px">這是問題框框</div>
 
 <h2 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1 Introduction"></a>1 Introduction</h2><p>&emsp;&emsp;”block interface” 給 host 看到的 storage device 會是一個可以以任何順序讀/寫/複寫且 block size 固定的一維陣列，隱藏了硬碟的特性，簡單化 host 的操作，在以前表現得很好，但是不適合 flash-based SSD。</p>
