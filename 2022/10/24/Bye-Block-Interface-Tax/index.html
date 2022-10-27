@@ -27,15 +27,15 @@
 <meta property="og:site_name" content="思考恐懼症">
 <meta property="og:description" content="psper: ZNS: Avoiding the Block Interface Tax for Flash-based SSDs 待整理-圖片、ZAC&#x2F;ABC&#x2F;ZNS 比較">
 <meta property="og:locale" content="zh_TW">
-<meta property="og:image" content="https://i.imgur.com/lPkhuF1.png">
-<meta property="og:image" content="https://i.imgur.com/VWsptst.png">
-<meta property="og:image" content="https://i.imgur.com/cKfFpUI.png">
-<meta property="og:image" content="https://i.imgur.com/hCRxmQ9.png">
-<meta property="og:image" content="https://i.imgur.com/UHNWBqG.png">
-<meta property="og:image" content="https://i.imgur.com/rYGytnQ.png">
+<meta property="og:image" content="http://yoursite.com/uploads/ByeBlockInterfaceTax/figure4.png">
+<meta property="og:image" content="http://yoursite.com/uploads/ByeBlockInterfaceTax/figure5.png">
+<meta property="og:image" content="http://yoursite.com/uploads/ByeBlockInterfaceTax/figure6.png">
+<meta property="og:image" content="http://yoursite.com/uploads/ByeBlockInterfaceTax/figure7.png">
+<meta property="og:image" content="http://yoursite.com/uploads/ByeBlockInterfaceTax/figure9.png">
+<meta property="og:image" content="http://yoursite.com/uploads/ByeBlockInterfaceTax/figure10.png">
 <meta property="og:image" content="https://i.imgur.com/MBPwcT9.png">
 <meta property="article:published_time" content="2022-10-24T06:42:26.000Z">
-<meta property="article:modified_time" content="2022-10-25T03:46:51.641Z">
+<meta property="article:modified_time" content="2022-10-27T09:50:04.295Z">
 <meta property="article:author" content="Yak">
 <meta property="article:tag" content="ZNS SSD">
 <meta property="article:tag" content="LSM-tree">
@@ -47,7 +47,7 @@
 <meta property="article:tag" content="fio">
 <meta property="article:tag" content="Linux">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://i.imgur.com/lPkhuF1.png">
+<meta name="twitter:image" content="http://yoursite.com/uploads/ByeBlockInterfaceTax/figure4.png">
 
 <link rel="canonical" href="http://yoursite.com/2022/10/24/Bye-Block-Interface-Tax/">
 
@@ -207,7 +207,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2022-10-25 11:46:51" itemprop="dateModified" datetime="2022-10-25T11:46:51+08:00">2022-10-25</time>
+                <time title="修改時間：2022-10-27 17:50:04" itemprop="dateModified" datetime="2022-10-27T17:50:04+08:00">2022-10-27</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -237,12 +237,12 @@
 <p>◪ 說是筆記，其實只是在嘗試翻譯，以及提出問題並回答罷了◩<br>◩ 如果不認識 ZNS SSD，可以先讀<a href="https://ieeexplore.ieee.org/document/9188086" target="_blank" rel="noopener">這篇 paper</a>，取得一些 background knowledge 後再閱讀這篇筆記 ◪<br>◩ 沒有標註來源的引言皆出自 <a href="https://www.usenix.org/conference/atc21/presentation/bjorling" target="_blank" rel="noopener">paper</a> ◪</p>
 <div style="border:#DDDDDD 3px dashed; padding:3px">這是問題框框</div>
 
-<h2 id="1-emsp-Introduction"><a href="#1-emsp-Introduction" class="headerlink" title="1 &emsp; Introduction"></a>1 &emsp; Introduction</h2><p>&emsp;&emsp;”block interface” 給 host 看到的 storage device 會是一個可以以任何順序讀/寫/複寫且尺寸固定的一維陣列，隱藏了硬碟的特性，簡單化 host 的操作，在以前表現得很好，但是不適合 flash-based SSD。</p>
+<h2 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1 Introduction"></a>1 Introduction</h2><p>&emsp;&emsp;”block interface” 給 host 看到的 storage device 會是一個可以以任何順序讀/寫/複寫且 block size 固定的一維陣列，隱藏了硬碟的特性，簡單化 host 的操作，在以前表現得很好，但是不適合 flash-based SSD。</p>
 <p>&emsp;&emsp;要讓 SSD 可以支援 block interface 會有不小的 cost，因為 flash 不能直接當成一維陣列來看，flash 的儲存空間會被分為數個 blocks，block 中只能執行 sequential write，而 block 的空間又被區分為 pages，page 為最小寫入單位。造成 cost 的主要原因是 flash 的其中一個物理特性: erase-before-write，儲存空間並不能直接被複寫，需要以 block 為單位進行 erase 後，才可以再次寫入資料，也因此有 garbage collection 這個機制來回收儲存空間。</p>
-<p>&emsp;&emsp;由於 flash 在寫入時有上述限制，導致 SSD 與 block interface 有 mismatch，而這些 mismatch 需要 FTL 來當溝通的橋樑，使 SSD 可以執行 block inter face 提供給host 的功能。FTL 使用大量的 DRAM 來儲存 logical-to-physical page mapping tabele，使得 SSD 能處理 block interface 提供給 host 的複寫功能。FTL 也保留一部分的儲存空間作為 “over-provisioning”，來降低 garbage collection 對於 performance 的影響。</p>
+<p>&emsp;&emsp;由於 flash 在寫入時有上述限制，導致 SSD 與 block interface 有 mismatch，而這些 mismatch 需要 FTL 來當溝通的橋樑，使 SSD 可以執行 block interface 提供給 host 的功能。FTL 使用大量的 DRAM 來儲存 logical-to-physical page mapping tabele，使得 SSD 能處理 block interface 提供給 host 的複寫功能。FTL 也保留一部分的儲存空間作為 “over-provisioning”(筆記中有時會簡稱 OP)，來降低 garbage collection 對於 performance 的影響。</p>
 <p>&emsp;&emsp;The NVMe Zoned Namespace Command Set specification 是一款為 ZNS SSD 設計的新 interface standard，這篇 paper 會介紹 ZNS interface，以及說明其如何影響 SSD 的軟/韌體和 host 的軟體。</p>
 <p><strong>§2</strong><br>&emsp; 描述 ZNS interface，並說明其如何避免 block interface tax<br><strong>§3.1</strong><br>&emsp; 描述 ZNS device 為了降低 performance unpredictability 以及減少 in-device sources 而捨棄的責任<br><strong>§3.2</strong><br>&emsp; 描述 ZNS 預期得到的結果: 讓 host 以 erase block 為單位管理儲存資料; 將 FTL 的責任轉移給 host 相較於集合 data mapping and plament 來得沒效率。<br><strong>§4</strong><br>&emsp; 研究團隊為使 Linux kernel, fio benchmark tool, f2fs file system, RocksDB key-value store 支援 ZNS 所付出的努力<br><strong>§5.1</strong><br>&emsp; 實驗顯示 ZNS SSD 相較於 block-interface SSD，有 2.7x 的 throughput，以及降低 64% 的 random read latency<br><strong>§5.2</strong><br>&emsp; 實驗顯示當 RocksDB 或 f2fs 跑在 ZNS interface 上時，都能達到比跑在 block interface 上時更高的 performance; 當 RocksDB 利用 ZenFS 直接跑在 ZNS SSD 上時，也能得到比 RocksDB 透過 file system 跑在 block-interface 更好的 performance</p>
-<h2 id="2-emsp-The-Zoned-Storage-Model"><a href="#2-emsp-The-Zoned-Storage-Model" class="headerlink" title="2 &emsp; The Zoned Storage Model"></a>2 &emsp; The Zoned Storage Model</h2><p>&emsp;&emsp;The block interface 是設計給當時最常被使用的 HDD，它並不適合 SSD 底層的 flash，但 block interface 提供的 semantics (可以想成 interface 提供給 host 的功能) 隨著時間變成了不成文的規定，大家都用這套規則。於是 SSD 推出時，添加了複雜的韌體 (FTL) 來處理 SSD 跟 block interface 之間的 mismatch。</p>
+<h2 id="2-The-Zoned-Storage-Model"><a href="#2-The-Zoned-Storage-Model" class="headerlink" title="2 The Zoned Storage Model"></a>2 The Zoned Storage Model</h2><p>&emsp;&emsp;The block interface 是設計給當時最常被使用的 HDD，它並不適合 SSD 底層的 flash，但 block interface 提供的 semantics (可以想成 interface 提供給 host 的功能) 隨著時間變成了不成文的規定，大家都用這套規則。於是 SSD 推出時，添加了複雜的韌體 (FTL) 來處理 SSD 跟 block interface 之間的 mismatch。</p>
 <p><strong>§2.1</strong> The block interface 為 SSD 增加的「稅」<br><strong>§2.2</strong> 現有的減稅方法<br><strong>§2.3</strong> zoned storage 的基本特性</p>
 <div style="border:#DDDDDD 3px dashed; padding:3px">
 
@@ -253,7 +253,7 @@
 </blockquote>
 </div>
 
-<h3 id="2-1-emsp-The-Block-Interface-Tax"><a href="#2-1-emsp-The-Block-Interface-Tax" class="headerlink" title="2.1 &emsp; The Block Interface Tax"></a>2.1 &emsp; The Block Interface Tax</h3><p>&emsp;&emsp;SSD 底下的 empty flash page 可以被寫入資料，但寫入一次後，就不可以 overwrite，必須先以 erase block 的單位進行 erase，才可以再次被寫入資料。</p>
+<h3 id="2-1-The-Block-Interface-Tax"><a href="#2-1-The-Block-Interface-Tax" class="headerlink" title="2.1 The Block Interface Tax"></a>2.1 The Block Interface Tax</h3><p>&emsp;&emsp;SSD 底下的 empty flash page 可以被寫入資料，但寫入一次後，就不可以 overwrite，必須先以 erase block 的單位進行 erase，才可以再次被寫入資料。</p>
 <p>&emsp;&emsp;如果 SSD 是透過 block interface 被 host 使用，那就必須要有 FTL 利用 write-anywhere approach、mapping table 來處理 in-place update。FTL 也利用 garbage collection 來回收釘子戶資料霸佔的空間，同時注意 flash 的 wearage。</p>
 <p>&emsp;&emsp;FTL 會嚴重影響 performance，為了避免 media limitation，in-place update 的資料會直接被寫到下一個可以寫的位子。也因此，host 失去了 data placement 的控制權。另外，隨著資料的寫入與捨棄，block 中會同時有 valid data 跟 invalid data，為了重新利用 invalid data 佔據的空間，就會需要 garbage collection。然而，garbage collection 會對之後的 requests 造成 performance unpredicability。</p>
 <p>&emsp;&emsp;為了降低 garbage collection 對效能的影響，有了 “over-provisioning” 的出現。over-provisioning 是指 SSD 留一些容量不告訴 host，將空間留給 garbage collection 使用。假設 OP 為 7%，SSD 告訴 host 有 100 的空間，事實上 SSD 有 107 的空間。因為 host 以為的容量比較低，它就不會寫那麼多資料，SSD 就可以有更多空間處理 garbage collection。至於 SSD 如何維護 OP，就要看 FTL 的設計。</p>
@@ -281,11 +281,11 @@
 </blockquote>
 </div>
 
-<h3 id="2-2-emsp-Existing-Tax-Reduction-Strategics"><a href="#2-2-emsp-Existing-Tax-Reduction-Strategics" class="headerlink" title="2.2 &emsp; Existing Tax-Reduction Strategics"></a>2.2 &emsp; Existing Tax-Reduction Strategics</h3><p><strong>Stream SSDs</strong><br>&emsp;&emsp;host 可以在 write command 中放入 “stream hint”，讓 SSD 根據 hint 將 data 放入不同 erase blocks。如果 host 給的 hint 足夠好，擁有不同 lifetime 的 data 就可以被分開，進而減少 garbage collection。然而，如果 host 沒有給出正確的 hint，就會與傳統 SSD 差不多，需要 OP 跟 DRAM 來減少時間上的 overhead。</p>
+<h3 id="2-2-Existing-Tax-Reduction-Strategics"><a href="#2-2-Existing-Tax-Reduction-Strategics" class="headerlink" title="2.2 Existing Tax-Reduction Strategics"></a>2.2 Existing Tax-Reduction Strategics</h3><p><strong>Stream SSDs</strong><br>&emsp;&emsp;host 可以在 write command 中放入 “stream hint”，讓 SSD 根據 hint 將 data 放入不同 erase blocks。如果 host 給的 hint 足夠好，擁有不同 lifetime 的 data 就可以被分開，進而減少 garbage collection。然而，如果 host 沒有給出正確的 hint，就會與傳統 SSD 差不多，需要 OP 跟 DRAM 來減少時間上的 overhead。</p>
 <p><strong>Open-Channel SSDs</strong><br>&emsp;&emsp;host 跟 SSD 共同管理一組擁有連續 LBA 的 chunks，SSD 可以對 host 公開這些 chunks，使其與 media 的 physical erase block boundaries 對齊，藉此減少 in-device garbage collection，同時減少對於 DRAM 以及 over-provisioning 的需求。data placement 的責任被轉移給 host，host 同時需要處理 wear-leveling。host 需要管理很多事情，會很難被 interface 採納，需要軟體更新。</p>
 <p>&emsp;&emsp;我自己對 OCSSD 的理解是，host 可以知道 data 實際是怎麼在 flash 中擺放，以及多了 data placement 跟 request scheduling 的控制權。</p>
 <p>↓ 這看起來像酷酷的標語 ↓<br><code>ZNS aims to eliminate the mismatch between SSD media and the device interface.</code><br>↑ 這看起來像酷酷的標語 ↑</p>
-<h3 id="2-3-emsp-Tax-free-Storage-with-Zones"><a href="#2-3-emsp-Tax-free-Storage-with-Zones" class="headerlink" title="2.3 &emsp; Tax-free Storage with Zones"></a>2.3 &emsp; Tax-free Storage with Zones</h3><p>&emsp;&emsp;將 SSD 的 logical address space 切塊，每一塊都是一個 “zone”。zone 可以 random read，但只能 sequential write，且如果要 erase，就要整塊 erase。</p>
+<h3 id="2-3-Tax-free-Storage-with-Zones"><a href="#2-3-Tax-free-Storage-with-Zones" class="headerlink" title="2.3 Tax-free Storage with Zones"></a>2.3 Tax-free Storage with Zones</h3><p>&emsp;&emsp;將 SSD 的 logical address space 切塊，每一塊都是一個 “zone”。zone 可以 random read，但只能 sequential write，且如果要 erase，就要整塊 erase。</p>
 <p>&emsp;&emsp;The sequential write constraint 靠著 per-zone state machine 跟 write pointer 來被遵守。（每個 zone 都有自己的 state machine 跟 write pointer）</p>
 <p><strong>The State Machine</strong><br>Zone 有四種 state：</p>
 <ol>
@@ -326,8 +326,8 @@
 <p>（要查一下其他 SSD 怎麼處理 recovery）</p>
 </div>
 
-<h2 id="3-emsp-Evolving-toward-ZNS"><a href="#3-emsp-Evolving-toward-ZNS" class="headerlink" title="3 &emsp; Evolving toward ZNS"></a>3 &emsp; Evolving toward ZNS</h2><p><strong>§3.1</strong> 硬體怎麼影響效能<br><strong>§3.2</strong> ZNS interface 拿去接接看不用的應用？</p>
-<h3 id="3-1-emsp-Hardware-Impact"><a href="#3-1-emsp-Hardware-Impact" class="headerlink" title="3.1 &emsp; Hardware Impact"></a>3.1 &emsp; Hardware Impact</h3><p>&emsp;&emsp;ZNS SSD 將傳統 SSD 的 FTL 處理 random write 的相關責任轉移給 host，SSD 不用處理 randome write，ZNS interface 也不允許 random write，flash 跟 interface 的 mismatch 也就消除了。</p>
+<h2 id="3-Evolving-toward-ZNS"><a href="#3-Evolving-toward-ZNS" class="headerlink" title="3 Evolving toward ZNS"></a>3 Evolving toward ZNS</h2><p><strong>§3.1</strong> 硬體怎麼影響效能<br><strong>§3.2</strong> ZNS interface 拿去接接看不用的應用？</p>
+<h3 id="3-1-Hardware-Impact"><a href="#3-1-Hardware-Impact" class="headerlink" title="3.1 Hardware Impact"></a>3.1 Hardware Impact</h3><p>&emsp;&emsp;ZNS SSD 將傳統 SSD 的 FTL 處理 random write 的相關責任轉移給 host，SSD 不用處理 randome write，ZNS interface 也不允許 random write，flash 跟 interface 的 mismatch 也就消除了。</p>
 <p>&emsp;&emsp;garbage collection 的搬移 valid data 責任也轉移給 host，代表 write amplification on the device 被消除了。write amplification 的定義為 host write/device write，因為改由 host 來搬移 valid data(host 發起 write request 來搬資料)，就不算 device 有多寫資料，write amplication 就被消除了。(其實該多寫的資料還是有寫，但依照定義來看，的確是沒有 write amplication 了…)</p>
 <p>&emsp;&emsp;另外，因為是 host 來處理資料搬移，valid data 可以暫存在 memory，SSD 也不用預留空間來協助 garbage collection，over-privisioning 也就不需要了。</p>
 <p>&emsp;&emsp;ZNS 為 end-user 提供了很大的益處，在設計 FTL 時它採用了以下 tradeoffs:</p>
@@ -378,7 +378,7 @@
 </div>
 **-Device Resource-**
 
-<h3 id="3-2-emsp-Host-Software-Adoption"><a href="#3-2-emsp-Host-Software-Adoption" class="headerlink" title="3.2 &emsp; Host Software Adoption"></a>3.2 &emsp; Host Software Adoption</h3><p>&emsp;&emsp;三種將 host software 接上 ZNS interface 的方法：</p>
+<h3 id="3-2-Host-Software-Adoption"><a href="#3-2-Host-Software-Adoption" class="headerlink" title="3.2 Host Software Adoption"></a>3.2 Host Software Adoption</h3><p>&emsp;&emsp;三種將 host software 接上 ZNS interface 的方法：</p>
 <ol>
 <li>Host-side FTL (HFTL)</li>
 <li>File Systems</li>
@@ -421,7 +421,7 @@
 </blockquote>
 </div>
 
-<h2 id="4-emsp-Implement"><a href="#4-emsp-Implement" class="headerlink" title="4 &emsp; Implement"></a>4 &emsp; Implement</h2><p>&emsp;&emsp;作者修改了四個軟體專案，使其支援 ZNS：</p>
+<h2 id="4-Implement"><a href="#4-Implement" class="headerlink" title="4 Implement"></a>4 Implement</h2><p>&emsp;&emsp;作者修改了四個軟體專案，使其支援 ZNS：</p>
 <ol>
 <li>Linux kernel</li>
 <li>f2fs</li>
@@ -429,7 +429,7 @@
 <li>ZenFS (storage backend of RocksDB)</li>
 </ol>
 <p><strong>§4.1</strong> 描述為了在已支援 ZAC/ZBC 的架構上支援 ZNS，需要做的改變<br><strong>§4.2</strong> ZenFS 的架構細節</p>
-<h3 id="4-1-emsp-General-Linux-Support"><a href="#4-1-emsp-General-Linux-Support" class="headerlink" title="4.1 &emsp; General Linux Support"></a>4.1 &emsp; General Linux Support</h3><p>&emsp;&emsp;Linux kernel 的 Zoned Block Device (ZBD) subsystem 提供可以使用在各種 zoned storage 上的統一 zone storage API 的 abstraction layer，其提供支援 device enumeration、report of zones、zone management 的 in- kernel API 及 ioctl-based user-space API。如 fio 等應用可以利用 user-space API 發起對齊 device 的寫入特性的 IO request，繞過底層的 interface。</p>
+<h3 id="4-1-General-Linux-Support"><a href="#4-1-General-Linux-Support" class="headerlink" title="4.1 General Linux Support"></a>4.1 General Linux Support</h3><p>&emsp;&emsp;Linux kernel 的 Zoned Block Device (ZBD) subsystem 提供可以使用在各種 zoned storage 上的統一 zone storage API 的 abstraction layer，其提供支援 device enumeration、report of zones、zone management 的 in- kernel API 及 ioctl-based user-space API。如 fio 等應用可以利用 user-space API 發起對齊 device 的寫入特性的 IO request，繞過底層的 interface。</p>
 <p>&emsp;&emsp;作者為了讓 Linux kernel 及 ZBD subsystem 支援 ZNS，修改了 NVMe device driver，也修改 ZBD subsystem API，使其公開 per zone capacity attribute 及 active zones limit。</p>
 <p><strong>Zone Capacity</strong></p>
 <p>&emsp;&emsp;host manage 一組 zone descriptor data structure，用來儲存 zone capacity attribute 及版本。</p>
@@ -446,11 +446,11 @@
 <p>&emsp;&emsp;fio 並沒有針對 active limitation 做出修改，fio user 必須自己注意 active-limit-constraint。</p>
 <p>&emsp;&emsp;f2fs 限制其同時可 open 的 segment，數量為 6，也可減少至與 active zone number 相同。如果可以同時存在的 active zone 數量小於 6，f2fs 就下修同時可 open 的 segment 數量到 active zone 的數量。</p>
 <p>&emsp;&emsp;f2fs 需要將 metadata 儲存在 conventional block device（貌似是因為需要 random write），因為本篇實驗用的 ZNS SSD 有提供一小塊空間作為 block device，作者就沒有處理這個問題了。不過，也可以利用 translation layer 來解決。</p>
-<h3 id="4-2-emsp-RocksDB-Zone-Support"><a href="#4-2-emsp-RocksDB-Zone-Support" class="headerlink" title="4.2 &emsp; RocksDB Zone Support"></a>4.2 &emsp; RocksDB Zone Support</h3><p>&emsp;&emsp;這章會介紹作者如何利用 ZenFS (storage backend) 在 RocksDB 上實現 end-to-end data placement。如果用 file system 管理 RocksDB 內的資料，就不用額外處理 file extents、 buffering，以及 free space management，但也失去了直接將資料放進 zone 的能力，降低 performance。</p>
-<h4 id="4-2-1-emsp-ZenFS"><a href="#4-2-1-emsp-ZenFS" class="headerlink" title="4.2.1 &emsp; ZenFS"></a>4.2.1 &emsp; ZenFS</h4><p>&emsp;&emsp;ZenFS backend storage 實作極小的 on-disk file system，將其與 RocksDB 的 file wrapper API 整合。ZenFS 會小心地依照 zone 的 access constraint 將資料擺進 zone，並與 device-side zone metadata (eg write pointer) 配合寫入。</p>
+<h3 id="4-2-RocksDB-Zone-Support"><a href="#4-2-RocksDB-Zone-Support" class="headerlink" title="4.2 RocksDB Zone Support"></a>4.2 RocksDB Zone Support</h3><p>&emsp;&emsp;這章會介紹作者如何利用 ZenFS (storage backend) 在 RocksDB 上實現 end-to-end data placement。如果用 file system 管理 RocksDB 內的資料，就不用額外處理 file extents、 buffering，以及 free space management，但也失去了直接將資料放進 zone 的能力，降低 performance。</p>
+<h4 id="4-2-1-ZenFS"><a href="#4-2-1-ZenFS" class="headerlink" title="4.2.1 ZenFS"></a>4.2.1 ZenFS</h4><p>&emsp;&emsp;ZenFS backend storage 實作極小的 on-disk file system，將其與 RocksDB 的 file wrapper API 整合。ZenFS 會小心地依照 zone 的 access constraint 將資料擺進 zone，並與 device-side zone metadata (eg write pointer) 配合寫入。</p>
 <p>&emsp;&emsp;ZenFS 的主要組成如下：</p>
 <blockquote>
-<p><img src="https://i.imgur.com/lPkhuF1.png" alt=""></p>
+<p><img src="/uploads/ByeBlockInterfaceTax/figure4.png" alt=""></p>
 </blockquote>
 <p><strong>Journalling and Data</strong></p>
 <p>&emsp;&emsp;ZenFS 定義了兩個 zone type: journal zone、data zone。</p>
@@ -478,7 +478,7 @@
 <p>&emsp;&emsp;initial journal state 會由一個外部工具將  initial sequence number、superblock data structure、an empty snapshot of the journal 寫入第一個 journal zone。RocksDB 會去初始化 ZenFS，上面提到的復原 journal 的程序就會被執行，ZenFS 就會有初始的 journal state，就可以 access RocksDB 內的資料了。</p>
 <p><strong>Writable Capacity in Data Zones</strong></p>
 <p>&emsp;&emsp;想要有理想的 allocation，使得儲存空間被完全使用，需要 file size 為 zone 的 writable capacity 的倍數，使得 file data 可以分散到數個 zones，然後完全填滿所有 writable capacity。RocksDB 可以設定 file size，但這個設定只會是設定，實際上 file 會多大取決於 compaction 的結果，因此要讓 file 有一個明確的大小是不可行的。</p>
-<p>&emsp;&emsp;【不確定】ZenFS 做的是給一個範圍，限制 file data 寫完後，zone 剩下的空間比例。如果 file size 不符合限制，ZenFS 就會用它的 zone allocation algorithm 來確保 available capacity 盡量被使用到。</p>
+<p>&emsp;&emsp;ZenFS 做的是給一個範圍，限制 file data 寫完後，zone 剩下的空間比例。如果 file size 不符合限制，ZenFS 就會用它的 zone allocation algorithm (ie. Data Zone Selection) 來確保 available capacity 盡量被使用到。</p>
 <p><strong>Data Zone Selection</strong></p>
 <p>&emsp;&emsp;ZenFS 採用 best-effort algorithm 來選擇要拿來寫資料的 zone，在寫入 WAL 或 SST 前，會幫 file 設定 lifetime hint，藉此區分兩種 file。ZenFS 會去找 zone 中最大 lifetime 大於當前要寫的 file 的 lifetime 的 zone，來寫入 file，避免延長 zone 的存在時間。如果有很多符合的結果，就寫到 lifetime 最相近的 zone。如果沒有符合的 zone，就 allocate 一個 empty zone 來寫入。如果找到的 zone 不夠寫完 file，就用相同的方法再找一個 zone 來寫。</p>
 <p><strong>Active Zone Limits</strong></p>
@@ -495,7 +495,7 @@
 </blockquote>
 </div>
 
-<h2 id="Evaluation"><a href="#Evaluation" class="headerlink" title="Evaluation"></a>Evaluation</h2><p>&emsp;&emsp;作者使用一款 production SSD hardware platform 來執行實驗，可以選擇要當作 block-interface SSD 或是 ZNS SSD 使用。因此，透過幾乎相同的硬體，可以更好地比較 block-interface SSD 以及 ZNS SSD。</p>
+<h2 id="5-Evaluation"><a href="#5-Evaluation" class="headerlink" title="5 Evaluation"></a>5 Evaluation</h2><p>&emsp;&emsp;作者使用一款 production SSD hardware platform 來執行實驗，可以選擇要當作 block-interface SSD 或是 ZNS SSD 使用。因此，透過幾乎相同的硬體，可以更好地比較 block-interface SSD 以及 ZNS SSD。</p>
 <p><strong>§5.1</strong> Raw device IO performance: 直接比較 block-interface SSD 以及 ZNS SSD<br><strong>§5.2</strong> End-to-end application performance: 執行 f2fs、XFS 的 RocksDB 在 block-interface SSD 的效能、執行 ZenFS 的 RocksDB 在 ZNS SSD 的效能，比較這三者的效能<br><strong>§5.3</strong> End-to-end performance comparison with SSD Streams: 將執行 f2fs、XFS file system 的 RocksDB 分別執行在 streams-enabled block-interface SSD 以及 ZNS SSD 上，並比較兩者的效能</p>
 <p>&emsp;&emsp;實驗配置:</p>
 <table>
@@ -518,13 +518,15 @@
 <td align="left">128 GB (8×16GB DDR4-3200Mhz)</td>
 </tr>
 </tbody></table>
-<h3 id="5-1-emsp-Raw-I-O-Characteristics"><a href="#5-1-emsp-Raw-I-O-Characteristics" class="headerlink" title="5.1 &emsp; Raw I/O Characteristics"></a>5.1 &emsp; Raw I/O Characteristics</h3><p>&emsp;&emsp;實驗中，為求 block-interface SSD 跟 ZNS SSD 有相同的 workload，block-interface SSD 的 LBAs 會被切成跟 zone 一樣的區段，這些區段裡也有 sequential write constraint。</p>
+<h3 id="5-1-Raw-I-O-Characteristics"><a href="#5-1-Raw-I-O-Characteristics" class="headerlink" title="5.1 Raw I/O Characteristics"></a>5.1 Raw I/O Characteristics</h3><p>&emsp;&emsp;實驗中，為求 block-interface SSD 跟 ZNS SSD 有相同的 workload，block-interface SSD 的 LBAs 會被切成跟 zone 一樣的區段，這些區段裡也有 sequential write constraint。</p>
 <p><strong>Sustained Write Throughput</strong></p>
 <p>&emsp;&emsp;測量 SSD 的 throughput 來觀察 garbage collection 對於 throughput 的影響，以及其影響 host write 的程度。實驗是將 64KB 的資料寫入四個 zones，當一個 zone 滿後，另一個 zone 被選來 reset，並繼續寫入資料。實驗的過程中，測量 host write throughput 是否能達到特定的目標值，目標值為 0-1GB。從 figure 5(a) 可以發現 ZNS SSD 可以持續達到目標的 throughput，而 7% OP 及 28% OP 的 block-interface SSD 的 throughput 分別停在大約 300 MB/s 及 500 MB/s。</p>
 <p>&emsp;&emsp;因為 ZNS SSD 可以將寫入對齊到不同的 erase blocks，並避免 garbage collection，藉此得到更高的 performance 以及較低的 write amplification。而 block-interface SSD 將 lifetime 不同的資料都混合放進同一個 erase block，造成 garbage collection overhead 的上升。</p>
 <p><strong>Random Reads and Writes</strong></p>
 <p>&emsp;&emsp;為了觀察 ZNS SSD 減少的 read latency，在上一個的實驗的基礎上，加上了 4KB 的 read requests，並紀錄在不同 write target 下的 read latency。figure 5(b) 顯示 ZNS SSD 的 read latency 以線性成長，而 block-interface SSD 的 latency 則以更快的速度提高。</p>
-<p><img src="https://i.imgur.com/VWsptst.png" alt=""></p>
+<blockquote>
+<p><img src="/uploads/ByeBlockInterfaceTax/figure5.png" alt=""></p>
+</blockquote>
 <div style="border:#DDDDDD 3px dashed; padding:3px">
 
 <p><strong>Why do the block-interface SSDs also have the sequential write constraint?</strong></p>
@@ -534,7 +536,7 @@
 </blockquote>
 </div>
 
-<h3 id="5-2-emsp-RocksDB"><a href="#5-2-emsp-RocksDB" class="headerlink" title="5.2 &emsp; RocksDB"></a>5.2 &emsp; RocksDB</h3><p>&emsp;&emsp;4 setups:</p>
+<h3 id="5-2-RocksDB"><a href="#5-2-RocksDB" class="headerlink" title="5.2 RocksDB"></a>5.2 RocksDB</h3><p>&emsp;&emsp;4 setups:</p>
 <ul>
 <li>f2fs + block-interface SSD</li>
 <li>XFS + block-interface SSD</li>
@@ -554,18 +556,49 @@
 <p>&emsp;&emsp;使用 write-heavy benchmark 來比較 28% OP SSD 跟 ZNS SSD 的 write throughput，先用 <em>fillrandom</em> 寫入 380萬筆 (20B key, 400B value)，再用 <em>overwhrite</em> 隨機地 overwrite 所有 vlaue。</p>
 <p>&emsp;&emsp;<em>fillradom</em> 是從 clean state (empty?) 開始寫入，因此 garbage collection overhaed 影響不大，在 <em>overwrite</em> 才能看出 garbage colection overhead 的影響。</p>
 <p>&emsp;&emsp;兩種 benchmarks 的結果都顯示使用 ZNS SSD 可以得到較好的結果，尤其是 <em>overwrite</em> 的結果更顯示 garbage colleciton overhaed 會嚴重影響整體效能。</p>
-<p><img src="https://i.imgur.com/cKfFpUI.png" alt=""></p>
+<blockquote>
+<p><img src="/uploads/ByeBlockInterfaceTax/figure6.png" alt=""></p>
+</blockquote>
 <p><strong>Read While Writing</strong></p>
 <p>&emsp;&emsp;ZNS SSD 因為沒有 device garbage collection，得到較低的 read latency，這個實驗想看 no device garbage collection 如何影響 RocksDB 的 read throughput。 </p>
 <p><em>randomread</em> → <em>readwhilewriting</em>(limited write rate) → <em>readwhilewriting</em>(no limit)</p>
 <p>&emsp;&emsp;<em>randomread</em> 沒有 write request 來干擾，大家的表現都差不多。</p>
-<p><img src="https://i.imgur.com/hCRxmQ9.png" alt=""></p>
+<blockquote>
+<p><img src="/uploads/ByeBlockInterfaceTax/figure7.png" alt=""></p>
+</blockquote>
 <p><strong>Impact of Capacity Over-Provisioning</strong></p>
 <p>&emsp;&emsp;查看 over-provisioning 對於效能的影響，有 OP 的 SSD 因為留了大量空間處理 garbage collection，減少了寫放大。原本空間吃緊時，就要 garbage collection，複製 valid data，造成寫放大。有了 OP(更多空間) 就可以有更多時間等 block 內的 data 變 invalid，藉此下降了寫放大。但是 ZNS SSD 沒有 OP，仍然沒有嚴重的寫放大問題。</p>
-<p><img src="https://i.imgur.com/UHNWBqG.png" alt=""></p>
-<h3 id="5-3-emsp-5-3-Streams"><a href="#5-3-emsp-5-3-Streams" class="headerlink" title="5.3 &emsp; 5.3 Streams"></a>5.3 &emsp; 5.3 Streams</h3><p>&emsp;&emsp;最後，比較 block-interface SSD with streams 跟 ZNS SSD。結果就是block-interface SSD without streams &lt; block-interface SSD with streams &lt; ZNS SSD</p>
-<p><img src="https://i.imgur.com/rYGytnQ.png" alt=""></p>
-<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><div style="border:#DDDDDD 3px dashed; padding:3px">
+<blockquote>
+<p><img src="/uploads/ByeBlockInterfaceTax/figure9.png" alt=""></p>
+</blockquote>
+<h3 id="5-3-Streams"><a href="#5-3-Streams" class="headerlink" title="5.3 Streams"></a>5.3 Streams</h3><p>&emsp;&emsp;最後，比較 block-interface SSD with streams 跟 ZNS SSD。結果就是block-interface SSD without streams &lt; block-interface SSD with streams &lt; ZNS SSD</p>
+<blockquote>
+<p><img src="/uploads/ByeBlockInterfaceTax/figure10.png" alt=""></p>
+</blockquote>
+<h2 id="6-Reference"><a href="#6-Reference" class="headerlink" title="6 Reference"></a>6 Reference</h2><div style="border:#DDDDDD 3px dashed; padding:3px">
+
+<p><strong>What is the difference between ZAC/ZBC and ZNS Standards?</strong></p>
+<p>ZBC: Zoned Block Commands in T10/SAS<br>ZAC: Zoned Device ATA Command Set in T13/SATA<br>ZNS: Zoned Namespaces in NVMe™</p>
+<p>&emsp;&emsp;SAS, SATA, NVMe are communication protocols<br>&emsp;&emsp;ZBC, ZAC, ZNS 分別是提供給 SAS, SATA, NVMe 的 command sets，其中 ZBC, ZAC 是設計給 SMR 的，ZBC, ZAC 的 commands 有:</p>
+<ul>
+<li>REPORT ZONES</li>
+<li><strong>RESET WRITE POINTER</strong></li>
+<li>OPEN ZONE</li>
+<li>CLOSE ZONE</li>
+<li>FINISH ZONE</li>
+</ul>
+<p>&emsp;&emsp;而 ZNS 的 commands 有:    </p>
+<ul>
+<li>REPORT ZONE</li>
+<li><strong>RESET ZONE</strong></li>
+<li>OPEN ZONE</li>
+<li>CLOSE ZONE</li>
+<li>FINISH ZONE</li>
+<li><strong>ZONE APPEND</strong></li>
+</ul>
+</div>
+</br>
+<div style="border:#DDDDDD 3px dashed; padding:3px">
 
 <p><strong>What is two-step programming</strong></p>
 <blockquote>
@@ -679,7 +712,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-emsp-Introduction"><span class="nav-text">1 &amp;emsp; Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-emsp-The-Zoned-Storage-Model"><span class="nav-text">2 &amp;emsp; The Zoned Storage Model</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-emsp-The-Block-Interface-Tax"><span class="nav-text">2.1 &amp;emsp; The Block Interface Tax</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-emsp-Existing-Tax-Reduction-Strategics"><span class="nav-text">2.2 &amp;emsp; Existing Tax-Reduction Strategics</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-emsp-Tax-free-Storage-with-Zones"><span class="nav-text">2.3 &amp;emsp; Tax-free Storage with Zones</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-emsp-Evolving-toward-ZNS"><span class="nav-text">3 &amp;emsp; Evolving toward ZNS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-emsp-Hardware-Impact"><span class="nav-text">3.1 &amp;emsp; Hardware Impact</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-emsp-Host-Software-Adoption"><span class="nav-text">3.2 &amp;emsp; Host Software Adoption</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-emsp-Implement"><span class="nav-text">4 &amp;emsp; Implement</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-emsp-General-Linux-Support"><span class="nav-text">4.1 &amp;emsp; General Linux Support</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-emsp-RocksDB-Zone-Support"><span class="nav-text">4.2 &amp;emsp; RocksDB Zone Support</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-2-1-emsp-ZenFS"><span class="nav-text">4.2.1 &amp;emsp; ZenFS</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Evaluation"><span class="nav-text">Evaluation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-emsp-Raw-I-O-Characteristics"><span class="nav-text">5.1 &amp;emsp; Raw I&#x2F;O Characteristics</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-emsp-RocksDB"><span class="nav-text">5.2 &amp;emsp; RocksDB</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-emsp-5-3-Streams"><span class="nav-text">5.3 &amp;emsp; 5.3 Streams</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-text">Reference</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Introduction"><span class="nav-text">1 Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-The-Zoned-Storage-Model"><span class="nav-text">2 The Zoned Storage Model</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-The-Block-Interface-Tax"><span class="nav-text">2.1 The Block Interface Tax</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-Existing-Tax-Reduction-Strategics"><span class="nav-text">2.2 Existing Tax-Reduction Strategics</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-Tax-free-Storage-with-Zones"><span class="nav-text">2.3 Tax-free Storage with Zones</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Evolving-toward-ZNS"><span class="nav-text">3 Evolving toward ZNS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-Hardware-Impact"><span class="nav-text">3.1 Hardware Impact</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-Host-Software-Adoption"><span class="nav-text">3.2 Host Software Adoption</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-Implement"><span class="nav-text">4 Implement</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-General-Linux-Support"><span class="nav-text">4.1 General Linux Support</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-RocksDB-Zone-Support"><span class="nav-text">4.2 RocksDB Zone Support</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-2-1-ZenFS"><span class="nav-text">4.2.1 ZenFS</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-Evaluation"><span class="nav-text">5 Evaluation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-Raw-I-O-Characteristics"><span class="nav-text">5.1 Raw I&#x2F;O Characteristics</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-RocksDB"><span class="nav-text">5.2 RocksDB</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-Streams"><span class="nav-text">5.3 Streams</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-Reference"><span class="nav-text">6 Reference</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
