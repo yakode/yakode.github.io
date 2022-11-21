@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/yakogo.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-yak.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-yak.ico">
+  <link rel="mask-icon" href="/images/yakogo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="paper: ZNS+: Advanced Zoned Namespace Interface for Supporting In-Storage Zone Compaction &amp;emsp;&amp;emsp;這篇 paper 認為 ZNS interface 直接將 garbage collection 的責任轉移給 host，雖然「減少」了寫放大，但也增加了 host 的複雜性。ZNS+ 新增了三種">
+<meta property="og:type" content="article">
+<meta property="og:title" content="+++++++ZNS+++++++">
+<meta property="og:url" content="http://yoursite.com/2022/11/10/ZNS/index.html">
+<meta property="og:site_name" content="思考恐懼症">
+<meta property="og:description" content="paper: ZNS+: Advanced Zoned Namespace Interface for Supporting In-Storage Zone Compaction &amp;emsp;&amp;emsp;這篇 paper 認為 ZNS interface 直接將 garbage collection 的責任轉移給 host，雖然「減少」了寫放大，但也增加了 host 的複雜性。ZNS+ 新增了三種">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/nHfC1U2.png">
+<meta property="og:image" content="https://i.imgur.com/QDbzZAb.png">
+<meta property="og:image" content="https://i.imgur.com/mz2r1Rk.png">
+<meta property="og:image" content="https://i.imgur.com/A9oDeT0.png">
+<meta property="og:image" content="https://i.imgur.com/jR5lOzU.png">
+<meta property="og:image" content="https://i.imgur.com/QeSD6z3.png">
+<meta property="article:published_time" content="2022-11-10T09:11:40.000Z">
+<meta property="article:modified_time" content="2022-11-21T06:17:38.580Z">
+<meta property="article:author" content="Yak">
+<meta property="article:tag" content="ZNS SSD">
+<meta property="article:tag" content="ZNS inerface">
+<meta property="article:tag" content="threaded logging">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/nHfC1U2.png">
+
+<link rel="canonical" href="http://yoursite.com/2022/11/10/ZNS/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-TW'
+  };
+</script>
+
+  <title>+++++++ZNS+++++++ | 思考恐懼症</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">思考恐懼症</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>標籤</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2022/11/10/ZNS/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+      <meta itemprop="name" content="Yak">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="思考恐懼症">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          +++++++ZNS+++++++
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2022-11-10 17:11:40" itemprop="dateCreated datePublished" datetime="2022-11-10T17:11:40+08:00">2022-11-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2022-11-21 14:17:38" itemprop="dateModified" datetime="2022-11-21T14:17:38+08:00">2022-11-21</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%B8%E7%BF%92%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">學習筆記</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>paper: <a href="https://www.usenix.org/conference/osdi21/presentation/han" target="_blank" rel="noopener">ZNS+: Advanced Zoned Namespace Interface for Supporting In-Storage Zone Compaction</a></p>
+<p>&emsp;&emsp;這篇 paper 認為 ZNS interface 直接將 garbage collection 的責任轉移給 host，雖然「減少」了寫放大，但也增加了 host 的複雜性。ZNS+ 新增了三種 command，使得 ZNS 支援 F2FS 使用的 threaded-logging 來回收儲存空間。在回收儲存空間時採用 hybrid segment recycling，依情況選擇普通的 garbage collection (segment compaction) 或是 threaded-logging。</p>
+<p><code>以下為亂七八糟 paper 翻譯以及我的笨問題們</code></p>
+<p>[待整理]</p>
+<a id="more"></a>
+
+<h1 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1 Introduction"></a>1 Introduction</h1><p>&emsp;&emsp;ZNS SSD 相較於傳統 SSD 有幾個優勢：</p>
+<ol>
+<li>better performance isolation (allocate seperate zone to different I/O stream)</li>
+<li>less demand of DRAM (coarse-grained mapping)]</li>
+<li>no demand of the over-provisioned space (no SSD-internal garbage collecion)</li>
+<li>no unpredictable latency caused by the garbage collection</li>
+<li>no write amplificaiton</li>
+</ol>
+<p><strong>IO Stack for ZNS</strong><br>&emsp;&emsp;針對 IO stack 的部分，為了支援 ZNS，軟體要修改兩個部分：file system、IO scheduler。由於 zone 內有 sequential write constraint，file system 需選擇 log-structured file system，避免有 random write，而 IO scheduler 則需保證 write request 在每個 zone 內照順序執行。</p>
+<p><strong>Increased Host Overhead</strong><br>&emsp;&emsp;為了造就 GC-less SSD，garbage collection 的責任必須轉移到 host 端。但是 host-side garbage collection 其實更高，因為 host-level block copy 需要 IO require handling、host-to-device data transfer、page allocation for read data。做完 garbage collection 後，因為 data 的位子有更動，還需要 update metadata。而且 data copy 通常會一次做很多筆，後面的 write request 的等待時間就會超級長。當前對於 ZNS 的設計只專注於 SSD 端的益處，卻忽略了 host 端增加的複雜性。</p>
+<p><strong>LFS-aware ZNS</strong><br>&emsp;&emsp;為了減少 segment compaction 的 overhead，需要一些 device 端的 support，可以從兩個方向來下手，加速 segment compaction 的過程或者避免 segment compaction 的產生。這篇 paper 提出了 ZNS+，一個 LFS-aware ZNS interface，其透過新加入的 zone_compaction command 以及 TL_open command 來支援兩種回收空間的方式，internal zone compaction(IZC) 以及 sparse sequential overwrite。(兩者皆不會觸法 host operation)</p>
+<p>&emsp;&emsp;針對加速 segment compaction 的部分，可以透過利用 zone_compaction command 將 data copy 轉交給 device 執行來實現，因為 device-side data copy 會比 host-side data copy 來得快。</p>
+<p>&emsp;&emsp;針對避免 segment compaction 的部分，LFS 採用了另一種回收空間的方法，threaded logging。threaded logging 會把 new data random overwrite 到 dirty section，就不需要額外複製 data(overhead of reclain section)，也能充分使用儲存空間，降低了 write traffic，也提升了 performance。但是，threaded logging 沒辦法直接使用在 ZNS SSD 上，因為其需要 random write。</p>
+<p>&emsp;&emsp;ZNS+ 會透過 internal plugging 將 sparse sequential write 轉換成 dense sequential write，internal plugging 是指在 write requests 中的空位寫入 valid data(threaded logging 的概念)。sparse sequential write 是如何回收空間？將 sector 的 valid data 慢慢複製，但不改變 sector 中的 offset，有空位(原本 invalid data 的 offset)就寫 write request，WP 到了有 valid data 的 offset 就 copy valid data。§3 會提到細節。</p>
+<p><strong>ZNS+-aware File System</strong><br>&emsp;&emsp;file system 這邊也應該去使用到 ZNS+ 的特性：</p>
+<ol>
+<li>SSD-internal datacopy 會因為 path 的不同，而採用不同 copy operation，如果 source 跟 destination 都在相同的 flash chip 就會使用 copyback command。如果使用 copyback command 就不會有 off-chip data transfer，可以更快地完成 data copy。因此，作者提出了 <strong style= "background:yellow" >copyback-aware block allocation</strong>，其嘗試將 data copy 的 source LBA 及 destination LBA mapp 到相同的 flash chip。</li>
+<li>ZNS+ 支援兩種 segment recycling 的 policy，internal zone compaction 以及 threaded logging，file system 要選擇要採用哪一個 policy。因此，作者採用了 <strong style= "background:yellow" >hybrid segment recycling</strong>，依照回收的 cost 及 benefit 來決定要使用 segment compaction 還是 threaded logging。</li>
+</ol>
+<h1 id="2-Background"><a href="#2-Background" class="headerlink" title="2 Background"></a>2 Background</h1><h2 id="2-1-SSD-Architecture"><a href="#2-1-SSD-Architecture" class="headerlink" title="2.1 SSD Architecture"></a>2.1 SSD Architecture</h2><p>&emsp;&emsp;SSD 通常由數個 flash chips 組成，且採用 multi-channel 以及 multi-way 的結構來取得平行性。SSD 有數個 parallel flash controler (ie. channels)，每個 controller 可以 access 到數個 flash chips (ie. ways)。每個 flash chip 中有數個 erase blocks，而每的 erase blocks 又由數個 flash pages 組成。如果要 overwrite flash page，需要先 erase 其所處的 erase block。因此 SSD 採用 out-of-place update scheme，有名為 FTL 的韌體來處理 host(virtual) 與 flash memory(physical) 之間的 address 轉換。由於 flash page 的大小通常比 logical block 來的大，連續的數個 logical blocks 會被寫在同一個 flash page。這篇 paper 稱 map 到相同 flash page 的連續 logical blocks 為 <strong>chunk</strong>。</p>
+<p>&emsp;&emsp;Flash memory chip 通常有支援 read, write, erase, copyback command，其中 copyback command 是將在同一個 flash chip 中將 flash page 中的 data 複製到另一個 flash page。(copyback command 應為支援相同 flash plane 中的 data copy，但這篇論文使用的 flash chip 只有一個 die，每個 die 又只有一個 flash plane) Chip-internal data transfer 不支援 ECC 的 check，因此可能會有 error propagation 的問題。解決方法有: </p>
+<ul>
+<li>讓 controller 同時檢查是否有錯誤，若有的話就 invalid 複製的 data，讓 controller 來複製。</li>
+<li>(第二個方法我看不懂)或是限制連續 copyback 的數量。</li>
+</ul>
+<h2 id="2-2-Zone-Mapping-in-ZNS-SSD"><a href="#2-2-Zone-Mapping-in-ZNS-SSD" class="headerlink" title="2.2 Zone Mapping in ZNS SSD"></a>2.2 Zone Mapping in ZNS SSD</h2><p><img src="https://i.imgur.com/nHfC1U2.png" alt=""></p>
+<p>詞彙介紹:</p>
+<ul>
+<li><strong>chunk</strong>: map 到相同 flash page 的連續 logical blocks</li>
+<li><strong>flash block group (FBG)</strong>: map 到相同 zone 的 flash blocks<br>*為了避免有 partial-valid block，zone size 需為 flash block size 倍數。<br>*為了達到較高的 parallelism，相同 FBG(zone) 中的 chunks 要交錯排開。<br>*zone 的 FBG 是動態分配的，所以要有 zone-to-FBG mapping table。</li>
+<li><strong>stripe</strong>: 由在相同 FBG 中，每個 flash block 中有相同 offset 的 chunks 組成</li>
+<li><strong>flash chip group (FCG)</strong>: 把所有 chips 分組，每組有相同數量的 chips</li>
+</ul>
+<p>&emsp;&emsp;ZNS SSD 只需要 zone-to-FBG mapping table，其他 address 的轉換都只需要靠計算 offset 就能得到。透過 reset command 可以 reset zone，其會使 Write pointer(WP) 指向第一個可以寫的位子。因為 flash block 不可以直接被複寫，所以會有一組新個 FBG 被 allocated 給 reseted zone，WP 會指向那組 FBG 的第一個位子。</p>
+<h2 id="2-3-F2FS-Segment-Management"><a href="#2-3-F2FS-Segment-Management" class="headerlink" title="2.3 F2FS Segment Management"></a>2.3 F2FS Segment Management</h2><p><img src="https://i.imgur.com/QDbzZAb.png" alt=""></p>
+<p>&emsp;&emsp;<strong>block type</strong></p>
+<ul>
+<li>node block<br>inode, index(direct node, indirect ndoe)</li>
+<li>data block<br>directory, file data</li>
+</ul>
+<p>&emsp;&emsp;<strong>logging</strong></p>
+<ul>
+<li>append logging<br>sequentially write to the clean segment when the space is sufficient</li>
+<li>threaded loggin<br>random write the obsolete space</li>
+</ul>
+<p>&emsp;&emsp;<strong>cleaning(compaction)</strong></p>
+<ul>
+<li>foreground<br>空間不足時趕快回收空間~(這區筆記不小心都英文了xDD)</li>
+<li>background<br>triggered when the system is idle and the number of space is higher than the threshold. (會區分冷熱資料)</li>
+</ul>
+<p>&emsp;&emsp;當 file system 的 space ultilization 很高時，會有很多 write request，因此優化 foreground cleaning，是 improve performance 的關鍵。這篇 paper 會著重在 foreground cleaning performance。</p>
+<h1 id="3-ZNS-Interface-and-File-System-Support"><a href="#3-ZNS-Interface-and-File-System-Support" class="headerlink" title="3 ZNS+ Interface and File System Support"></a>3 ZNS+ Interface and File System Support</h1><h2 id="3-1-Motivation"><a href="#3-1-Motivation" class="headerlink" title="3.1 Motivation"></a>3.1 Motivation</h2><p>（這區都在談 F2FS，請以 F2FS 的特性看，不要被 SSD 的觀念卡住，這裡沒有 SSD 的部分）</p>
+<p><strong>Nornal Segment Compaction</strong></p>
+<p>&emsp;&emsp;normal LFS compaction procedure:</p>
+<ol>
+<li>victim segment selection</li>
+<li>destination allocation</li>
+<li>valid data copy<br>contains read phases and write phases</li>
+<li>metadata update</li>
+</ol>
+<p><img src="https://i.imgur.com/mz2r1Rk.png" alt=""></p>
+<p><strong>Read Phase</strong><br>&emsp;&emsp;首先，host 要在 cache 清出一塊空間，再去 send read request 讀 victim segment 中的 valid blocks。一開始的 cache allocation 可能會造成 dirty data 的寫入（被 cache 踢掉的 data）。因為 valid data 會是 scattered，host 需要一個一個發起 read request，造成很多 flash read operation，這些 flash read operation 讀取的資料可能散落在不同 flash chip 中。如果要讀取的資料不夠多，沒辦法利用到 flash chip 的 parallelism，那麼 flash chips 之間的 read 就會出現 idle intervals。</p>
+<p><strong>Write Phase</strong><br>&emsp;&emsp;在 append logging scheme 下，LFS 會 sequentially allocate blocks 給 write request，所以 file system 會一次寫入大量的資料來減少 request handling overhead。因此，file system 會等 read phase 結束後，再一次寫入所有 data，但就又會造成 idle interval。</p>
+<p><strong>Metadata Update</strong><br>&emsp;&emsp;為了應對突然掉電造成的資料遺失，F2FS 會儲存 checkpoint，將 metadata 等資料寫入 storage，在需要的時候再 roll back 回最新的 checkpoint。對 segment 做 cleaning 後，必須等到 metadata 被寫入 storage 後 (checkpoint 時)，才可以寫入新的資料，否則斷電可能會造成資料遺失。因為 metadata 會變成舊的版本，新的資料會被誤認為舊資料。</p>
+<p><strong>IZC-based Segment Compaction</strong><br><img src="https://i.imgur.com/A9oDeT0.png" alt=""><br>&emsp;&emsp;利用 zone_compaction command，讓 SSD 來處理 data 的搬移，host 就不用再清出 cache 的空間暫存資料。SSD 的 internal-controller 又能夠妥善地 read/write operation，來達到較好的 performance 以及最大化 flash chip 的使用。segment compaction 的 latency 也藉此下降了。另外，in-device 的 data copy 也有機會可以使用到 copyback command，可以比較快地複製資料。</p>
+<h2 id="3-2-LFS-aware-Interface"><a href="#3-2-LFS-aware-Interface" class="headerlink" title="3.2 LFS-aware Interface"></a>3.2 LFS-aware Interface</h2><p>ZNS+ 增加的 commands:</p>
+<ol>
+<li><strong><em>zone_compaction</em></strong> request IZC operation，跟 <em>simple_copy</em> 不一樣的是 destination 的部分，<em>simple_copy</em> 是要給一段連續空間，<em>zone_compaction</em> 的 destination 可以是不連續的。</li>
+<li><strong><em>TL_open</em></strong> open 用來 open threaded logging 的 zone</li>
+<li><strong><em>identify_mapping</em></strong> 可以知道哪些資料是 valid</li>
+</ol>
+<h3 id="3-2-1-Internal-Zone-Compaction"><a href="#3-2-1-Internal-Zone-Compaction" class="headerlink" title="3.2.1 Internal Zone Compaction"></a>3.2.1 Internal Zone Compaction</h3><p>&emsp;&emsp;ZNS+ storage system 的 segment compaction 的流程:</p>
+<ol>
+<li><strong>Cache Page Handling</strong><br>要檢查有沒有 victim segment 的 data 在 cache，如果 cached page 是 dirty，就用 write request 寫到 destination；如果 cached page 是 clean，可以選擇要用 write request 或是 internaly copy 來搬移資料。</li>
+<li><strong>Copy Offloading</strong></li>
+<li><strong>Processing IZC</strong><br>利用 <em>zone_compaction</em> 搬移資料。</li>
+</ol>
+<p><strong>Async Interface and Request Scheduling</strong><br>&emsp;&emsp;<em>zone_compaction</em> 不會馬上被執行，會先放進 command queue，同時間 write request 可以繼續被處理，不用等 <em>zone_compaction</em> 執行完。</p>
+<h3 id="3-2-2-Sparse-Sequential-Overwrite"><a href="#3-2-2-Sparse-Sequential-Overwrite" class="headerlink" title="3.2.2 Sparse Sequential Overwrite"></a>3.2.2 Sparse Sequential Overwrite</h3><p><strong>Internal Plugging</strong><br>&emsp;&emsp;threaded logging 跟 ZNS 不相容，因此加上一條限制，要求 threaded logging 寫入的 logical block address 必須是遞增的，形成 sparse sequential write。這樣子，ZNS 就有辦法把 sparse sequential write 轉換成 dense sequential write，辦法是在 valid data 中穿插新的 write request，慢慢一起寫入到新的 FBG。<br><img src="https://i.imgur.com/jR5lOzU.png" alt=""><br>先把 A 複製到新 allocate 的 FBG，然後空位寫入新的資料，遇到原本有 valid data 的位子就直接複製，否則寫新資料。這樣做原本的 valid data 就會慢慢被複製到新的 FBG。</p>
+<p><strong>Opening Zone for Threaded Logging</strong><br>&emsp;&emsp;valid data 所在的位子沒辦法用來寫 new data，在 threaded logging 時必須被跳過，因此稱這些 valid data 為 skipped block。<br>&emsp;&emsp;可以透過比對 WP 的位子以及 write request 的起始位子，來確認目前 WP 的位子有沒有指向 skipped block。若 WP 指向 skipped block，就把 skipped block 複製到 LogFBG (new allocated FBG)；WP 指向 dirty segment，就處理 write request。但這樣做的話，必須要等新的 write request 來才知道要不要複製 skipped block，write request 可能會有 delay。因此新增了 <em>TL_open</em>，它會有一個給 SSD bitmap，告知 file system 的 segment 的資料 valid/invalid 狀態。就可以在 write request 進來前，先把可以複製的 skipped block 複製，減少 delay。</p>
+<p><strong>LogFBG Allocation</strong><br>&emsp;&emsp;因為 SSD 本身無法 overwrite，處理 threaded logging 的方法為 allocate 新的 FBG(LogFBG) 給 zone，將新舊資料都慢慢寫進 LogFBG，最後再回收原本的 FBG。<br>&emsp;&emsp;figure 4 的例子中，SSD allocate LogFBG FBG 15 給 Zone 1，WP reset 到開頭的位子。WP 指向 skipped block 時，就將 data 從 original FBG(FBG 6) 複製到 LogFBG(FBG 15)，否則等待寫入 write request。<br>&emsp;&emsp;read request 的部分，SSD 會查看要讀取的 LBA 與 WP 的關係，來決定要讀 original FBG 還是 LogFBG。如果 LBA &lt; WP，代表要讀的部分已經搬移到 LogFBG 了，就讀取 LogFBG 的資料；否則，讀取 original FBG。<br>&emsp;&emsp;如果是使用 static zone mapping policy(figure 1 為例子)，zone 中的 logical chunk 會一直被 map 到相同的 flash chip，遇到 fully valid chunk 就可以利用 <em>copyback</em> 來搬移資料（會比較快）。<br>&emsp;&emsp;TL_opened segment 的數量會覺得 LogFBG 的數量，F2FS 限制 LogFBG 的數量最高為 6，因此 LogFBG 的 space overhead 可忽略。當 TL_opened zone close 後，LogFBG 會取代 original FBG，而 original FBG 等待被回收。</p>
+<p><strong>LBA-ordered Plugging</strong><br>&emsp;&emsp;以 figure 4 為例，當 SSD 收到要寫入 P 和 Q 到 chunk 0 的request 時，SSD 會去讀 chunk 0 的 skipped block (A、B)，把它們合併成一個 full chunk 寫到 LogFBG。接著 WP 移動到了 chunk 1，整個 chunk 都是 skipped block，就直接利用 <em>copyback</em> 把 chunk 1 複製到 LogFBG。WP 移動到 chunk 2，集結 足夠的 write request 後，將資料(RSTU)寫入 LogFBG。這樣照著 logical address 的順序來複製資料的方法稱為<strong>LBA-ordered plugging</strong>，plugging 都會發生在 WP 的位子以遵守 LBA-ordered write constraint。</p>
+<p><strong>PPA-ordered Plugging</strong><br>&emsp;&emsp;雖然新寫入的 data 一定要寫在 WP 指向的位子，但是 internal plugging(指 skipped block 的 copy) 可以不用只寫 WP 指向的位子。如果有一塊 chunk 都是 skipped block，internal plugging 可以在 WP 移到它們的位子前，先執行，只要注意 flash block 內必須順序寫入 flash page 就好。（會有必須依照 WP 嚴格順序寫入是為了方便管理，但 internal plugging 是知道位子且一定會寫入的資料，空隙也會被 new data 填滿，就沒關係）<br>&emsp;&emsp;以 figure 4 為例，chunk 3 可以在 chunk 0、chunk 2 的 write request 寫好前，先利用 <em>copyback</em> 複製到 LogFBG。而 chunk 5 則因為 flash block 必須順序寫入，要等 chunk 1 複製後，才能處理。這種只考慮 physical write constraint 的寫入技巧，稱為 <strong>PPA-ordered plugging</strong>。</p>
+<p><strong>Why Threaded Logging Improves Performance</strong><br>&emsp;&emsp;其實 threaded logging 以及 segment compaction 複製的 block 數量是一樣的，threaded logging 之所以能夠提升效能是因為:</p>
+<ol>
+<li>threaded logging 避免的 metadata 的更新</li>
+<li>threaded logging 可以利用 idle flash chip</li>
+<li>plugging operation 可以分散開，減少對 write request 的影響</li>
+</ol>
+<p>&emsp;&emsp;反觀 segment compaction，每次執行的單位很大，而且 write request 必須等 segment compaction 執行完才能被處理，造成的 delay 就比較大。因此，當 threaded logging 被允許時，ZNS+ 可以帶來更好的效能。（但有跟 segment compaction 同等的寫放大問題）</p>
+<h2 id="3-3-ZNS-aware-LFS-Optimization"><a href="#3-3-ZNS-aware-LFS-Optimization" class="headerlink" title="3.3 ZNS-aware LFS Optimization"></a>3.3 ZNS-aware LFS Optimization</h2><p><img src="https://i.imgur.com/QeSD6z3.png" alt=""></p>
+<h3 id="3-3-1-Copyback-aware-Block-Allocation"><a href="#3-3-1-Copyback-aware-Block-Allocation" class="headerlink" title="3.3.1 Copyback-aware Block Allocation"></a>3.3.1 Copyback-aware Block Allocation</h3><p><strong>Low Utilization of Copyback at LFS</strong><br>&emsp;&emsp;segment compaction 通常是把 valid data 依 source LBA 的順序集中起來，再 sequential write 到 destination segment。這樣做的話，full valid chunk 內的 block 容易被分散，<em>copyback</em> 的使用機率不高。figure 5(a) 為例子，full valid chunk GHIJ 以及 CDEF 都被拆開，沒辦法使用 <em>copyback</em> 複製資料。</p>
+<p><strong>Chunk Mapping Identification</strong><br>&emsp;&emsp;為了最大化 <em>copyback</em> 的使用，作者提出了 <strong style= "background:yellow" >copyback-aware block allocation</strong>，以 figure 5(b) 為例，allocation 的流程為:</p>
+<ol>
+<li>file system 在 destination 保留一段連續空間，大小為要 copy 的 block 的數量(12 blocks)</li>
+<li>先把空間 allocate 給 full valid chunk，讓它們的 source chip 跟 destination chip 可以相同。(GHIJ、CDEF)</li>
+<li>利用 read/write request 處理剩下要般的零碎 valid data(A、B、K、L)</li>
+</ol>
+<p>&emsp;&emsp;如果 host 知道 logical chunk address 的哪些 bit 代表 FCG ID(flash chip group ID)、chip ID，host 就可以知道 chunk 被放在哪個 flash chip。<em>identify_mapping</em> command 會讓 SSD 回傳代表 FCG ID、chip ID 的 bit 範圍。</p>
+<p><strong>Maximizing Copyback Usage</strong><br>&emsp;&emsp;如果 full valid chunk 不是均勻地分散在各個 flash chip，那有的 full valid chunk 可能會沒辦法被 allocate 在相同 flash chip 的 destination，就無法利用 <em>copyback</em>。(比如總共要複製 4 個 chunk，有 2 個 flash chip，其中有 3 個 full valid chunk 來自同一個 flash chip) 這邊提出兩個解決辦法:</p>
+<ol>
+<li>在 destination 多 allocate 一些空間，留一些沒使用的洞</li>
+<li>連同 invalid block 一起搬(比如 figure 5(b) 中的 AxBx，直接利用 <em>copyback</em> 複製整塊 segment)</li>
+</ol>
+<p>&emsp;&emsp;這些做法雖然可以加速 segment compaction，但空間回收的效率也下降了。</p>
+<h3 id="3-3-2-Hybrid-Segment-Recycling"><a href="#3-3-2-Hybrid-Segment-Recycling" class="headerlink" title="3.3.2 Hybrid Segment Recycling"></a>3.3.2 Hybrid Segment Recycling</h3><p>&emsp;&emsp;雖然 threaded logging 減少了 block reclamation overhead，但回收空間的效率也比 segment compaction 來得差，因為: </p>
+<ol>
+<li><strong>Reclaiming Cost Imbalance</strong><br>&emsp;&emsp;threaded logging 在回收不同 type 的 segment 時，可能會有不同的 cost。而且為了避免不同 type 的資料混在一起，TL_opened zone 只能處理相同 type 的 write request。threaded logging 也沒辦法把冷熱資料分開（通通要寫到 LogFBG）。</li>
+<li><strong>Pre-Invalid Block Problem</strong><br>&emsp;&emsp;threaded logging 後，被回收的 segment 不可以馬上被重新利用，只能先標示為「pre-invalid」，直到 checkpoint。因為 in-storage meatadata 要等到 checkpoint 才會被更新，如果直接把 pre-invalid 的空間拿來存別的資料，碰上斷電，in-storage metadata 會認為那裡存的是舊 data，造成資料損失。</li>
+</ol>
+<p><strong>Periodic Checkpointing</strong><br>&emsp;&emsp;為了解決 pre-invalid block problem，作者提出 <strong>periodic checkpoint</strong>。當累積的 pre-invalid block 超過一定的數量 Θ<sub>PI</sub>，就觸發 checkpoint。</p>
+<p><strong>Reclaiming Cost Modeling</strong><br>C<sub>TL</sub> = f<sub>plugging</sub>(N<sub>pre-inv</sub> +N<sub>valid</sub>)<br>&emsp;&emsp;threaded logging 只需要複製 data。</p>
+<p>C<sub>SC</sub> = f<sub>copy</sub>(N<sub>valid</sub>)+ f<sub>write</sub>(N<sub>node</sub> +N<sub>meta</sub>)−B<sub>cold</sub><br>&emsp;&emsp;segment compaction 除了要複製 valid data，還要更新 node block 以及 metadata，不過因為會試圖將冷熱資料分開，會對未來的回收造成幫助。</p>
+<p><strong>Using Approximate Cost</strong><br>&emsp;&emsp;segment compaction 的 cost 的計算是比較困難的，直接計算每次要寫入多少 node block、metadata 的成本太高，也沒辦法直接計算冷熱資料的分離可以在未來減少多少 cost，因此使用估計值。<br>N<sub>node</sub> + N<sub>meta</sub> → α x N<sub>valid</sub><br>B<sub>cold</sub> → f<sub>plugging</sub>(β x N<sub>cold</sub>)</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/ZNS-SSD/" rel="tag"># ZNS SSD</a>
+              <a href="/tags/ZNS-inerface/" rel="tag"># ZNS inerface</a>
+              <a href="/tags/threaded-logging/" rel="tag"># threaded logging</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/10/14/Bye-Block-Interface-Tax/" rel="prev" title="Bye Block Interface Tax">
+      <i class="fa fa-chevron-left"></i> Bye Block Interface Tax
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-Introduction"><span class="nav-text">1 Introduction</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-Background"><span class="nav-text">2 Background</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-SSD-Architecture"><span class="nav-text">2.1 SSD Architecture</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-Zone-Mapping-in-ZNS-SSD"><span class="nav-text">2.2 Zone Mapping in ZNS SSD</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-F2FS-Segment-Management"><span class="nav-text">2.3 F2FS Segment Management</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-ZNS-Interface-and-File-System-Support"><span class="nav-text">3 ZNS+ Interface and File System Support</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-Motivation"><span class="nav-text">3.1 Motivation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-LFS-aware-Interface"><span class="nav-text">3.2 LFS-aware Interface</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-1-Internal-Zone-Compaction"><span class="nav-text">3.2.1 Internal Zone Compaction</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-2-Sparse-Sequential-Overwrite"><span class="nav-text">3.2.2 Sparse Sequential Overwrite</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3-ZNS-aware-LFS-Optimization"><span class="nav-text">3.3 ZNS-aware LFS Optimization</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-1-Copyback-aware-Block-Allocation"><span class="nav-text">3.3.1 Copyback-aware Block Allocation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-2-Hybrid-Segment-Recycling"><span class="nav-text">3.3.2 Hybrid Segment Recycling</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Yak"
+      src="/uploads/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Yak</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/yakode" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yakode" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yak</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 強力驅動
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
